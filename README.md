@@ -1,5 +1,5 @@
 # Echo-Server
-SMUMC 7th HACKERTON 2TEAM SERVER
+SMUMC 7th HACKERTON ATEAM SERVER
 
 ### 📋 Commit Message Convention
 |   Gitmoji    |    Tag     | Description |
