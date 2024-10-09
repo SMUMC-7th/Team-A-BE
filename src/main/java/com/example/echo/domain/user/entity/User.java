@@ -5,13 +5,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SoftDelete;
 
+import java.time.LocalDateTime;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Getter
 @Table(name = "user")
-@SoftDelete(columnName = "is_deleted") // soft delete 시 'is_deleted' 컬럼에 true가 들어감
 public class User extends BaseEntity {
 
     @Id
@@ -27,6 +28,16 @@ public class User extends BaseEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted = false;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    // 소프트 삭제 메서드
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    // 복원 메서드
+    public void restore() {
+        this.deletedAt = null;
+    }
 }
