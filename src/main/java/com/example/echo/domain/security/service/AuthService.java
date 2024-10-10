@@ -20,8 +20,8 @@ public class AuthService {
     public JwtDto reissueToken(JwtDto jwtDto) {
 
         log.info("[ Auth Service ] 토큰 재발급을 시작합니다.");
-        String accessToken = jwtDto.getAccessToken();
-        String refreshToken = jwtDto.getRefreshToken();
+        String accessToken = jwtDto.accessToken();
+        String refreshToken = jwtDto.refreshToken();
 
         //Access Token 으로부터 사용자 Email 추출
         String email = jwtUtil.getEmail(refreshToken); // **수정부분**

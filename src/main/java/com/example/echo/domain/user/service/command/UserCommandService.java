@@ -7,7 +7,6 @@ import com.example.echo.domain.user.entity.User;
 import com.example.echo.domain.user.exception.UserErrorCode;
 import com.example.echo.domain.user.exception.UserException;
 import com.example.echo.domain.user.repository.UserReposiotry;
-import com.example.echo.global.apiPayload.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

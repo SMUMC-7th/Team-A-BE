@@ -85,9 +85,9 @@ public class SecurityConfig {
         http
                 .logout((configurer) ->
                         configurer
-                                .logoutUrl("/users/logout")
+                                .logoutUrl("/api/users/logout")
                                 .deleteCookies("JSESSIONID")
-                                .logoutRequestMatcher(new AntPathRequestMatcher("/users/logout"))
+                                .logoutRequestMatcher(new AntPathRequestMatcher("/api/users/logout"))
 
                 );
 
@@ -98,7 +98,7 @@ public class SecurityConfig {
 
 
         // Login Filter URL 지정
-        loginFilter.setFilterProcessesUrl("/users/login");
+        loginFilter.setFilterProcessesUrl("/api/users/login");
 
         // filter chain 에 login filter 등록
         http

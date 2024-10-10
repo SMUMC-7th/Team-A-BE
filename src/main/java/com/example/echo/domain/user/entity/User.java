@@ -4,7 +4,6 @@ import com.example.echo.domain.user.dto.request.UserReqDto;
 import com.example.echo.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 

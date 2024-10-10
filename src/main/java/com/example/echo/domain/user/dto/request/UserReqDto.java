@@ -1,7 +1,5 @@
 package com.example.echo.domain.user.dto.request;
 
-import lombok.Getter;
-
 public class UserReqDto {
 
     public record CreateUserRequestDto(
