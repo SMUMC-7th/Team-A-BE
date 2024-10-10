@@ -5,7 +5,6 @@ import com.example.echo.global.apiPayload.code.BaseErrorCode;
 import com.example.echo.global.apiPayload.code.GeneralErrorCode;
 import com.example.echo.global.apiPayload.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -43,5 +43,4 @@ public class CustomResponse<T> {
     public static <T> CustomResponse<T> onFailure(String code, String message) {
         return new CustomResponse<>(false, code, message, null);
     }
-
 }
