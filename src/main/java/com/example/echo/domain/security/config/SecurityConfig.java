@@ -2,12 +2,17 @@ package com.example.echo.domain.security.config;
 
 
 import com.example.echo.domain.security.global.filter.CustomLoginFilter;
+import com.example.echo.domain.security.global.filter.CustomLogoutHandler;
 import com.example.echo.domain.security.global.filter.JwtAuthorizationFilter;
+import com.example.echo.domain.security.service.TokenService;
 import com.example.echo.domain.security.utils.JwtUtil;
 import com.example.echo.global.config.CorsConfig;
+import com.example.echo.global.util.HttpResponseUtil;
+import com.example.echo.global.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,13 +32,15 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtUtil jwtUtil;
+    private final TokenService tokenService;
+    private final RedisUtil redisUtil;
 
 
     //인증이 필요하지 않은 url
     private final String[] allowedUrls = {
-            "/users/login", //로그인은 인증이 필요하지 않음
-            "/users", //회원가입은 인증이 필요하지 않음
-            "/auth/reissue", //토큰 재발급은 인증이 필요하지 않음
+            "/api/users/login", //로그인은 인증이 필요하지 않음
+            "/api/users", //회원가입은 인증이 필요하지 않음
+            "/api/auth/reissue", //토큰 재발급은 인증이 필요하지 않음
             "/auth/**",
             "api/usage",
             "/swagger-ui/**",   // swagger 관련 URL
@@ -105,26 +112,26 @@ public class SecurityConfig {
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
         // login filter 전에 Auth Filter 등록
         http
-                .addFilterBefore(new JwtAuthorizationFilter(jwtUtil), CustomLoginFilter.class);
+                .addFilterBefore(new JwtAuthorizationFilter(jwtUtil, redisUtil), CustomLoginFilter.class);
 
 
         // JwtException 에 대한 Custom Exception 처리, 다루지 않음.
         //        http
 //                .addFilterBefore(new JwtExceptionFilter(), JwtAuthorizationFilter.class);
 
-        // Logout Filter (Redis 를 이용한 Logout 처리 , 다루지 않음)
-//        http
-//                .logout(logout -> logout
-//                        .logoutUrl("/api/v1/organizations/logout")
-//                        .addLogoutHandler(new CustomLogoutHandler(redisUtil, jwtUtil))
-//                        .logoutSuccessHandler((request, response, authentication) ->
-//                                HttpResponseUtil.setSuccessResponse(
-//                                        response,
-//                                        HttpStatus.OK,
-//                                        "로그아웃 성공"
-//                                )
-//                        )
-//                );
+//         Logout Filter (Redis 를 이용한 Logout 처리)
+        http
+                .logout(logout -> logout
+                        .logoutUrl("/api/users/logout")
+                        .addLogoutHandler(new CustomLogoutHandler(tokenService, jwtUtil))
+                        //.logoutSuccessUrl("/api/users/login") // 로그아웃 성공 시 리다이렉트할 URL 설정
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                           /* response.setStatus(HttpStatus.OK.value());
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            response.setCharacterEncoding("UTF-8");
+                            response.getWriter().write("{\"message\":\"로그아웃이 완료되었습니다.\"}");*/
+                        })
+                );
 
         return http.build();
     }
