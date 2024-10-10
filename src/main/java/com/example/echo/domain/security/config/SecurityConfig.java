@@ -4,6 +4,7 @@ package com.example.echo.domain.security.config;
 import com.example.echo.domain.security.global.filter.CustomLoginFilter;
 import com.example.echo.domain.security.global.filter.JwtAuthorizationFilter;
 import com.example.echo.domain.security.utils.JwtUtil;
+import com.example.echo.global.config.CorsConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,9 +54,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         // CORS 정책 설정
-//        http
-//                .cors(cors -> cors
-//                        .configurationSource(CorsConfig.apiConfigurationSource()));
+        http
+                .cors(cors -> cors
+                        .configurationSource(CorsConfig.apiConfigurationSource()));
 
         // csrf 비활성화
         http
