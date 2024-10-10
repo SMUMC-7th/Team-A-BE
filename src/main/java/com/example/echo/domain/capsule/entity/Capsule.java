@@ -4,7 +4,6 @@ import com.example.echo.domain.user.entity.User;
 import com.example.echo.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SoftDelete;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

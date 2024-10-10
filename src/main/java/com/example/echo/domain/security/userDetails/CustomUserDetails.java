@@ -3,13 +3,10 @@ package com.example.echo.domain.security.userDetails;
 import com.example.echo.domain.security.entity.AuthUser;
 import com.example.echo.domain.user.entity.User;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 public class CustomUserDetails extends AuthUser implements UserDetails {
 
