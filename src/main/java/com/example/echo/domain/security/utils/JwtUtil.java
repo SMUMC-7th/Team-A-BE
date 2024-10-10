@@ -2,6 +2,8 @@ package com.example.echo.domain.security.utils;
 
 
 import com.example.echo.domain.security.userDetails.CustomUserDetails;
+import com.example.echo.domain.user.entity.User;
+import com.example.echo.domain.user.repository.UserReposiotry;
 import com.example.echo.global.util.RedisUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -12,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -30,18 +33,20 @@ public class JwtUtil {
     private final Long accessExpMs;
     private final Long refreshExpMs;
     private final RedisUtil redisUtil;
+    private final UserReposiotry userReposiotry;
 
     public JwtUtil(
             @Value("${spring.jwt.secret}") String secret,
             @Value("${spring.jwt.token.access-expiration-time}") Long access,
             @Value("${spring.jwt.token.refresh-expiration-time}") Long refresh,
-            RedisUtil redisUtil) {
+            RedisUtil redisUtil, UserReposiotry userReposiotry) {
 
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
                 Jwts.SIG.HS256.key().build().getAlgorithm());
         accessExpMs = access;
         refreshExpMs = refresh;
         this.redisUtil = redisUtil;
+        this.userReposiotry = userReposiotry;
     }
 
     // JWT 토큰을 입력으로 받아 토큰의 subject 로부터 사용자 Email 추출하는 메서드
@@ -121,13 +126,11 @@ public class JwtUtil {
 
     // 제공된 리프레시 토큰을 기반으로 JwtDto 쌍을 다시 발급
     public String reissueToken(String refreshToken) throws SignatureException {
-
+        String email = getEmail(refreshToken);
+        User user = userReposiotry.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email));
         // refreshToken 에서 user 정보를 가져와서 새로운 토큰을 발급 (발급 시간, 유효 시간(reset)만 새로 적용)
-        CustomUserDetails userDetails = new CustomUserDetails(
-                getEmail(refreshToken),
-                null,
-                getRoles(refreshToken)
-        );
+        CustomUserDetails userDetails = new CustomUserDetails(user);
         log.info("[ JwtUtil ] 새로운 토큰을 재발급 합니다.");
 
         // 재발급

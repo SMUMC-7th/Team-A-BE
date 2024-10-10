@@ -3,6 +3,8 @@ package com.example.echo.domain.security.global.filter;
 
 import com.example.echo.domain.security.userDetails.CustomUserDetails;
 import com.example.echo.domain.security.utils.JwtUtil;
+import com.example.echo.domain.user.entity.User;
+import com.example.echo.domain.user.repository.UserReposiotry;
 import com.example.echo.global.util.RedisUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -26,6 +29,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
+    private final UserReposiotry userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -71,12 +75,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         jwtUtil.validateToken(accessToken);
         log.info("[ JwtAuthorizationFilter ] Access Token 유효성 검증 성공. ");
 
+        // 사용자 이메일로 User 엔티티 조회
+        String email = jwtUtil.getEmail(accessToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email));
+
         //CustomUserDetail 객체 생성
-        CustomUserDetails userDetails = new CustomUserDetails(
-                jwtUtil.getEmail(accessToken),
-                null,
-                jwtUtil.getRoles(accessToken)
-        );
+        CustomUserDetails userDetails = new CustomUserDetails(user);
 
         log.info("[ JwtAuthorizationFilter ] UserDetails 객체 생성 성공");
 

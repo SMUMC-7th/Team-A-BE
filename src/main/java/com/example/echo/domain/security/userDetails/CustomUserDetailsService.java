@@ -27,8 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<User> userEntity = userRepository.findByEmail(email);
         if (userEntity.isPresent()) {
             User user = userEntity.get();
-            String role = "Default";
-            return new CustomUserDetails(user.getEmail(),user.getPassword(), role);
+            return new CustomUserDetails(user);
         }
         throw new UsernameNotFoundException("사용자가 존재하지 않습니다.");
     }

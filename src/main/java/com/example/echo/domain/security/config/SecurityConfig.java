@@ -6,6 +6,7 @@ import com.example.echo.domain.security.global.filter.CustomLogoutHandler;
 import com.example.echo.domain.security.global.filter.JwtAuthorizationFilter;
 import com.example.echo.domain.security.service.TokenService;
 import com.example.echo.domain.security.utils.JwtUtil;
+import com.example.echo.domain.user.repository.UserReposiotry;
 import com.example.echo.global.config.CorsConfig;
 import com.example.echo.global.util.HttpResponseUtil;
 import com.example.echo.global.util.RedisUtil;
@@ -34,12 +35,13 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final TokenService tokenService;
     private final RedisUtil redisUtil;
+    private final UserReposiotry userReposiotry;
 
 
     //인증이 필요하지 않은 url
     private final String[] allowedUrls = {
             "/api/users/login", //로그인은 인증이 필요하지 않음
-            "/api/users", //회원가입은 인증이 필요하지 않음
+            "/api/users/signup", //회원가입은 인증이 필요하지 않음
             "/api/auth/reissue", //토큰 재발급은 인증이 필요하지 않음
             "/auth/**",
             "api/usage",
@@ -112,7 +114,7 @@ public class SecurityConfig {
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
         // login filter 전에 Auth Filter 등록
         http
-                .addFilterBefore(new JwtAuthorizationFilter(jwtUtil, redisUtil), CustomLoginFilter.class);
+                .addFilterBefore(new JwtAuthorizationFilter(jwtUtil, redisUtil, userReposiotry), CustomLoginFilter.class);
 
 
         // JwtException 에 대한 Custom Exception 처리, 다루지 않음.

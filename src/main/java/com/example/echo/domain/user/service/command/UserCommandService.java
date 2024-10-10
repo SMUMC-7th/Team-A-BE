@@ -1,5 +1,6 @@
 package com.example.echo.domain.user.service.command;
 
+import com.example.echo.domain.security.entity.AuthUser;
 import com.example.echo.domain.user.converter.UserConverter;
 import com.example.echo.domain.user.dto.request.UserReqDto;
 import com.example.echo.domain.user.dto.response.UserResDto;
