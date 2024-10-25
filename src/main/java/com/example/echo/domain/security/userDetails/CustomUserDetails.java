@@ -1,65 +1,59 @@
 package com.example.echo.domain.security.userDetails;
 
+import com.example.echo.domain.security.entity.AuthUser;
+import com.example.echo.domain.user.entity.User;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails extends AuthUser implements UserDetails {
 
-    private final String email;
-    private final String password;
-    private final String roles;
-
-    public CustomUserDetails(String email, String password, String roles) {
-        this.email = email;
-        this.password = password;
-        this.roles = roles;
+    //인증용 객체 생성자
+    public CustomUserDetails(User user) {
+        super(user.getId(), user.getEmail(), user.getPassword());
     }
 
-    // 해당 User 의 권한을 return
+    // 권한을 반환하는 메서드, 현재는 빈 컬렉션을 반환 (권한이 필요하다면 여기에 추가 가능)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(roles));
-        return authorities;
+        return Collections.emptyList(); // 빈 collection 반환
     }
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
+    // 비밀번호 반환
     @Override
     public String getPassword() {
-        return password;
+        return super.getPassword(); // User 클래스의 getPassword 메서드 호출
     }
 
-    // Account 가 만료되었는지?
+    // 이메일을 사용자 이름으로 반환
+    @Override
+    public String getUsername() {
+        return super.getEmail(); // User 클래스의 getEmail 메서드 호출
+    }
+
+    // 계정이 만료되지 않았음을 반환
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
-    // Account 가 잠겨있는지?
+    // 계정이 잠기지 않았음을 반환
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
-    // Credential 만료되지 않았는지?
+    // 자격 증명이 만료되지 않았음을 반환
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
-    // 활성화가 되어있는지?
+    // 계정이 활성화되어 있음을 반환
     @Override
     public boolean isEnabled() {
-        // User Entity 에서 Status 가져온 후 true? false? 검사
         return true;
     }
 }
