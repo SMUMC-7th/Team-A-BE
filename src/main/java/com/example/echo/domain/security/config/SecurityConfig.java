@@ -21,7 +21,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 @Configuration // 빈 등록
@@ -89,14 +88,6 @@ public class SecurityConfig {
                         .requestMatchers(allowedUrls).permitAll()
                         .anyRequest().authenticated() // 그 외의 url 들은 인증이 필요함
                 );
-        http
-                .logout((configurer) ->
-                        configurer
-                                .logoutUrl("/api/users/logout")
-                                .deleteCookies("JSESSIONID")
-                                .logoutRequestMatcher(new AntPathRequestMatcher("/api/users/logout"))
-
-                );
 
         // Login Filter
         CustomLoginFilter loginFilter = new CustomLoginFilter(
@@ -123,7 +114,7 @@ public class SecurityConfig {
         http
                 .logout(logout -> logout
                         .logoutUrl("/api/users/logout")
-                        .addLogoutHandler(new CustomLogoutHandler(tokenService, jwtUtil))
+                        .addLogoutHandler(new CustomLogoutHandler(redisUtil, jwtUtil))
                         //.logoutSuccessUrl("/api/users/login") // 로그아웃 성공 시 리다이렉트할 URL 설정
                         .logoutSuccessHandler((request, response, authentication) -> {
                            /* response.setStatus(HttpStatus.OK.value());

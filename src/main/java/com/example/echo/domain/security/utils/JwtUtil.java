@@ -1,6 +1,7 @@
 package com.example.echo.domain.security.utils;
 
 
+import com.example.echo.domain.security.dto.JwtDto;
 import com.example.echo.domain.security.userDetails.CustomUserDetails;
 import com.example.echo.domain.user.entity.User;
 import com.example.echo.domain.user.repository.UserReposiotry;
@@ -125,7 +126,7 @@ public class JwtUtil {
     }
 
     // 제공된 리프레시 토큰을 기반으로 JwtDto 쌍을 다시 발급
-    public String reissueToken(String refreshToken) throws SignatureException {
+    public JwtDto reissueToken(String refreshToken) throws SignatureException {
         String email = getEmail(refreshToken);
         User user = userReposiotry.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email));
@@ -134,7 +135,10 @@ public class JwtUtil {
         log.info("[ JwtUtil ] 새로운 토큰을 재발급 합니다.");
 
         // 재발급
-        return createJwtAccessToken(userDetails);
+        return new JwtDto(
+                createJwtAccessToken(userDetails),
+                createJwtRefreshToken(userDetails)
+        );
     }
 
     // HTTP 요청의 'Authorization' 헤더에서 JWT 액세스 토큰을 검색

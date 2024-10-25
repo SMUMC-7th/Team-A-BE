@@ -1,10 +1,10 @@
 package com.example.echo.domain.security.global.filter;
 
 import com.example.echo.domain.security.exception.SecurityErrorCode;
-import com.example.echo.domain.security.service.TokenService;
 import com.example.echo.domain.security.utils.JwtUtil;
 import com.example.echo.global.apiPayload.CustomResponse;
 import com.example.echo.global.util.HttpResponseUtil;
+import com.example.echo.global.util.RedisUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -22,7 +22,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomLogoutHandler implements LogoutHandler {
 
-    private final TokenService tokenService;
+    private final RedisUtil redisUtil;
     private final JwtUtil jwtUtil;
 
     @Override
@@ -36,16 +36,24 @@ public class CustomLogoutHandler implements LogoutHandler {
                 setErrorResponse(response, HttpStatus.UNAUTHORIZED, SecurityErrorCode.BAD_CREDENTIALS.getErrorResponse());
                 return;
             }
-
+            // 토큰 유효성 검증
             jwtUtil.validateToken(accessToken);
 
             String email = jwtUtil.getEmail(accessToken);
-            String refreshToken = tokenService.getRefreshTokenByEmail(email);
+            String accessTokenKey = email + ":blacklist";
+
+            // Redis 블랙리스트 Access 토큰 추가
+            // 30분
+            redisUtil.setBlackList(accessTokenKey, accessToken, 30*60*1000L);
+            log.info("[ CustomLogoutHandler ] Access 토큰 블랙리스트 등록");
+
+            // refresh 토큰 가져오기
+            String refreshTokenKey = email + ":refresh";
+            String refreshToken = (String) redisUtil.get(refreshTokenKey);
 
             if (refreshToken != null) {
-                tokenService.addToBlacklist(refreshToken);
-                tokenService.deleteTokenByEmail(email);
-                log.info("[ CustomLogoutHandler ] 리프레시 토큰 삭제 및 블랙리스트 처리 완료.");
+                redisUtil.delete(refreshTokenKey);
+                log.info("[ CustomLogoutHandler ] 리프레시 토큰 삭제");
             } else {
                 log.warn("[ CustomLogoutHandler ] 리프레시 토큰이 존재하지 않습니다.");
                 setErrorResponse(response, SecurityErrorCode.REFRESH_TOKEN_NOT_FOUND.getStatus(),
