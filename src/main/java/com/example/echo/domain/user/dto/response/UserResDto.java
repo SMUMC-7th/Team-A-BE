@@ -1,5 +1,6 @@
 package com.example.echo.domain.user.dto.response;
 
+import com.example.echo.domain.user.entity.AuthType;
 import lombok.Builder;
 
 public class UserResDto {
@@ -7,7 +8,9 @@ public class UserResDto {
     public record UserResponseDto(
             Long id,
             String email,
-            String nickname
+            String nickname,
+            AuthType authType
     ){
     }
+
 }
