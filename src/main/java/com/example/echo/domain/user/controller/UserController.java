@@ -2,6 +2,7 @@ package com.example.echo.domain.user.controller;
 
 
 import com.example.echo.domain.security.annotation.CurrentUser;
+import com.example.echo.domain.security.dto.JwtDto;
 import com.example.echo.domain.security.dto.LoginRequestDto;
 import com.example.echo.domain.security.entity.AuthUser;
 import com.example.echo.domain.user.dto.request.UserReqDto;
@@ -46,6 +47,20 @@ public class UserController {
     public CustomResponse<UserResDto.UserResponseDto> createUser(@RequestBody UserReqDto.CreateUserRequestDto dto){
         UserResDto.UserResponseDto result = userCommandService.createUser(dto);
         return CustomResponse.onSuccess(HttpStatus.CREATED, result);
+    }
+
+    @PostMapping("/kakao")
+    @Operation(summary = "카카오 회원가입 API")
+    public CustomResponse<JwtDto> kakao(@RequestBody UserReqDto.OAuthUserRequestDto dto){
+        JwtDto result = userCommandService.authKakao(dto);
+        return CustomResponse.onSuccess(HttpStatus.OK, result);
+    }
+
+    @PostMapping("/naver")
+    @Operation(summary = "네이버 회원가입 API")
+    public CustomResponse<JwtDto> naver(@RequestBody UserReqDto.OAuthUserRequestDto dto){
+        JwtDto result = userCommandService.authNaver(dto);
+        return CustomResponse.onSuccess(HttpStatus.OK, result);
     }
 
 
