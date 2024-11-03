@@ -37,13 +37,13 @@ public class SecurityConfig {
 
     //인증이 필요하지 않은 url
     private final String[] allowedUrls = {
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/v3/api-docs/**",
             "/api/users/login", //로그인은 인증이 필요하지 않음
             "/api/users/signup", //회원가입은 인증이 필요하지 않음
             "/api/auth/reissue", //토큰 재발급은 인증이 필요하지 않음
-            "/auth/**",
-            "api/usage",
-            "/swagger-ui/**",   // swagger 관련 URL
-            "/v3/api-docs/**",
+            "/auth/**"
     };
 
     @Bean
