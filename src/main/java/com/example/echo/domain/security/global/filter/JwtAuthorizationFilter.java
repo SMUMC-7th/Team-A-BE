@@ -1,10 +1,12 @@
 package com.example.echo.domain.security.global.filter;
 
 
+import com.example.echo.domain.security.exception.SecurityErrorCode;
 import com.example.echo.domain.security.userDetails.CustomUserDetails;
 import com.example.echo.domain.security.utils.JwtUtil;
 import com.example.echo.domain.user.entity.User;
 import com.example.echo.domain.user.repository.UserReposiotry;
+import com.example.echo.global.util.HttpResponseUtil;
 import com.example.echo.global.util.RedisUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -60,9 +62,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             // logout 처리된 accessToken
             if (blacklistedToken != null && blacklistedToken.equals(accessToken)) {
                 log.warn("로그아웃 처리된 토큰입니다.");
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().write("로그아웃된 토큰입니다.");
+                HttpResponseUtil.setErrorResponse(response, HttpStatus.UNAUTHORIZED,
+                        SecurityErrorCode.BLACKLIST_TOKEN.getErrorResponse());
                 return;
             }
 
@@ -71,9 +72,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             logger.warn("[ JwtAuthorizationFilter ] accessToken 이 만료되었습니다.");
-            response.setStatus(HttpStatus.UNAUTHORIZED.value()); // 401 return
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write("Access Token 이 만료되었습니다.");
+            HttpResponseUtil.setErrorResponse(response, HttpStatus.UNAUTHORIZED,
+                    SecurityErrorCode.TOKEN_EXPIRED.getErrorResponse());
         }
     }
 
