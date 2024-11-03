@@ -1,6 +1,5 @@
 package com.example.echo.domain.user.entity;
 
-import com.example.echo.domain.user.dto.request.UserReqDto;
 import com.example.echo.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,7 +24,7 @@ public class User extends BaseEntity {
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = true)
     private String password;
 
     @Column(name = "active", nullable = false)
@@ -33,6 +32,10 @@ public class User extends BaseEntity {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @Column(name = "auth_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AuthType authType;
 
     // 소프트 삭제 메서드
     public void softDelete() {
@@ -45,8 +48,8 @@ public class User extends BaseEntity {
         this.deletedAt = null;
     }
 
-    public void updateNickname(UserReqDto.UpdateNicknameRequestDto dto) {
-        this.nickname = dto.newNickname();
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public void setPassword(String newEncodedPassword) {

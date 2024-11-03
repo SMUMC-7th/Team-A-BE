@@ -9,10 +9,14 @@ public class UserReqDto {
     ) {
     }
 
+    public record OAuthUserRequestDto(
+            String email,
+            String nickname
+    ){
+    }
 
     public record UpdateNicknameRequestDto(
-            String newNickname,
-            String password
+            String newNickname
     ){
     }
 
