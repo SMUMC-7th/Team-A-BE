@@ -1,6 +1,5 @@
 package com.example.echo.domain.user.entity;
 
-import com.example.echo.domain.user.dto.request.UserReqDto;
 import com.example.echo.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;

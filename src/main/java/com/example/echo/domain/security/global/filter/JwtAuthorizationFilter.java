@@ -1,12 +1,10 @@
 package com.example.echo.domain.security.global.filter;
 
 
-import com.example.echo.domain.security.exception.SecurityErrorCode;
 import com.example.echo.domain.security.userDetails.CustomUserDetails;
 import com.example.echo.domain.security.utils.JwtUtil;
 import com.example.echo.domain.user.entity.User;
 import com.example.echo.domain.user.repository.UserReposiotry;
-import com.example.echo.global.util.HttpResponseUtil;
 import com.example.echo.global.util.RedisUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
