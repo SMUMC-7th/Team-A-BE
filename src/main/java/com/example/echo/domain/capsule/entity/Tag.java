@@ -15,6 +15,7 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "tag_name", nullable = false)
-    private String tagName;
+    @Enumerated(EnumType.STRING)
+    @Column(name="tag_name", columnDefinition = "VARCHAR(15)")
+    private TagName tagName;
 }

@@ -3,9 +3,9 @@ package com.example.echo.domain.user.dto.request;
 public class UserReqDto {
 
     public record CreateUserRequestDto(
-        String email,
-        String nickname,
-        String password
+            String email,
+            String nickname,
+            String password
     ) {
     }
 
