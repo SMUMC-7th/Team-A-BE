@@ -1,10 +1,12 @@
 package com.example.echo.domain.security.global.filter;
 
 
+import com.example.echo.domain.security.exception.SecurityErrorCode;
 import com.example.echo.domain.security.userDetails.CustomUserDetails;
 import com.example.echo.domain.security.utils.JwtUtil;
 import com.example.echo.domain.user.entity.User;
 import com.example.echo.domain.user.repository.UserReposiotry;
+import com.example.echo.global.util.HttpResponseUtil;
 import com.example.echo.global.util.RedisUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -50,10 +52,19 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
 
+            // 블랙리스트 토큰 체크
+            String email = jwtUtil.getEmail(accessToken);
+            String blacklistKey = email + ":blacklist";
+            String blacklistedToken = (String) redisUtil.getBlackList(blacklistKey);
+
+
+
             // logout 처리된 accessToken
-            if (redisUtil.get(accessToken) != null && redisUtil.get(accessToken).equals("logout")) {
-                logger.info("[*] Logout accessToken");
-                filterChain.doFilter(request, response);
+            if (blacklistedToken != null && blacklistedToken.equals(accessToken)) {
+                log.warn("로그아웃 처리된 토큰입니다.");
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("로그아웃된 토큰입니다.");
                 return;
             }
 

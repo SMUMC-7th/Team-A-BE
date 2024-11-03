@@ -42,6 +42,8 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/api/users/login", //로그인은 인증이 필요하지 않음
             "/api/users/signup", //회원가입은 인증이 필요하지 않음
+            "/api/users/kakao",  //카카오 소셜로그인
+            "/api/users/naver",  //네이버 소셜로그인
             "/api/auth/reissue", //토큰 재발급은 인증이 필요하지 않음
             "/auth/**"
     };
