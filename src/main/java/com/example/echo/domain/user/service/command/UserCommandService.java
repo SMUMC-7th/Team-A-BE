@@ -54,48 +54,23 @@ public class UserCommandService {
     }
 
 
-    public JwtDto authKakao(UserReqDto.OAuthUserRequestDto dto){
-        // soft delete 된 유저 포함해서 전체 user email로 찾기
-        Optional<User> optionalUser = userRepository.findByEmail(dto.email());
-        // 카카오 회원가입
-        if(optionalUser.isEmpty()){
-            User newUser = UserConverter.toEntityKakao(dto);
-            userRepository.save(newUser);
-            return provideToken(newUser);
-        }
 
-
-        User user = optionalUser.get();
-        // active = false인 유저 에러 처리
-        if (!user.isActive()) {
-            throw new UserException(UserErrorCode.USER_INACTIVE);
-        }
-        if(!user.getAuthType().equals(AuthType.KAKAO)){
-            throw new UserException(UserErrorCode.WRONG_AUTH_TYPE);
-        }
-
-        // 로그인 처리
-        return provideToken(user);
-    }
-
-    public JwtDto authNaver(UserReqDto.OAuthUserRequestDto dto){
+    public JwtDto auth(UserReqDto.OAuthUserRequestDto dto, AuthType authType){
         // soft delete 된 유저 포함해서 전체 user email로 찾기
         Optional<User> optionalUser = userRepository.findByEmail(dto.email());
         // 네이버 회원가입
         if(optionalUser.isEmpty()){
-            User newUser = UserConverter.toEntityNaver(dto);
+            User newUser = UserConverter.toEntity(dto, authType);
             userRepository.save(newUser);
             return provideToken(newUser);
         }
-
-
 
         User user = optionalUser.get();
         // active = false인 유저 에러 처리
         if (!user.isActive()) {
             throw new UserException(UserErrorCode.USER_INACTIVE);
         }
-        if(!user.getAuthType().equals(AuthType.NAVER)){
+        if(!user.getAuthType().equals(authType)){
             throw new UserException(UserErrorCode.WRONG_AUTH_TYPE);
         }
 

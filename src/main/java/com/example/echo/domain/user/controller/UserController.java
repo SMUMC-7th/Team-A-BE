@@ -7,6 +7,7 @@ import com.example.echo.domain.security.dto.LoginRequestDto;
 import com.example.echo.domain.security.entity.AuthUser;
 import com.example.echo.domain.user.dto.request.UserReqDto;
 import com.example.echo.domain.user.dto.response.UserResDto;
+import com.example.echo.domain.user.entity.AuthType;
 import com.example.echo.domain.user.service.command.UserCommandService;
 import com.example.echo.domain.user.service.query.UserQueryService;
 import com.example.echo.global.apiPayload.CustomResponse;
@@ -52,14 +53,14 @@ public class UserController {
     @PostMapping("/kakao")
     @Operation(summary = "카카오 회원가입 API")
     public CustomResponse<JwtDto> kakao(@RequestBody UserReqDto.OAuthUserRequestDto dto){
-        JwtDto result = userCommandService.authKakao(dto);
+        JwtDto result = userCommandService.auth(dto, AuthType.KAKAO);
         return CustomResponse.onSuccess(HttpStatus.OK, result);
     }
 
     @PostMapping("/naver")
     @Operation(summary = "네이버 회원가입 API")
     public CustomResponse<JwtDto> naver(@RequestBody UserReqDto.OAuthUserRequestDto dto){
-        JwtDto result = userCommandService.authNaver(dto);
+        JwtDto result = userCommandService.auth(dto, AuthType.NAVER);
         return CustomResponse.onSuccess(HttpStatus.OK, result);
     }
 

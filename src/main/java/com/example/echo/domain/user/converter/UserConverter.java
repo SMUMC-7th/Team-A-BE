@@ -19,25 +19,16 @@ public class UserConverter {
                 .build();
     }
 
-    public static User toEntityKakao(UserReqDto.OAuthUserRequestDto dto){
+    public static User toEntity(UserReqDto.OAuthUserRequestDto dto, AuthType authType){
         return User.builder()
                 .email(dto.email())
                 .nickname(dto.nickname())
                 .password(null)
                 .active(true)
-                .authType(AuthType.KAKAO)
+                .authType(authType)
                 .build();
     }
 
-    public static User toEntityNaver(UserReqDto.OAuthUserRequestDto dto){
-        return User.builder()
-                .email(dto.email())
-                .nickname(dto.nickname())
-                .password(null)
-                .active(true)
-                .authType(AuthType.NAVER)
-                .build();
-    }
 
     public static UserResDto.UserResponseDto from(User user){
         return UserResDto.UserResponseDto.builder()
