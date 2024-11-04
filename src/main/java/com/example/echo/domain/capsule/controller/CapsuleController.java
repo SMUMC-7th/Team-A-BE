@@ -35,16 +35,19 @@ public class CapsuleController {
         return CustomResponse.onSuccess(HttpStatus.CREATED, result);
     }
 
-    @DeleteMapping("{timecapsuleId}")
+    @DeleteMapping("/{timecapsuleId}")
     @Operation(method = "DELETE", summary = "타임캡슐 삭제 API", description = "타임캡슐을 삭제하는 API입니다.")
     public CustomResponse<?> deleteCapsule(
-            @PathVariable("timecapsuleId") Long timecapsuleId
+            @PathVariable("timecapsuleId") Long timecapsuleId,
+            @CurrentUser AuthUser authUser
     ){
+
+
         capsuleCommandService.deleteCapsule(timecapsuleId);
         return CustomResponse.onSuccess(HttpStatus.NO_CONTENT, "성공적으로 타임캡슐이 삭제되었습니다.");
     }
 
-    @PatchMapping("{timecapsuleId}")
+    @PatchMapping("/{timecapsuleId}")
     @Operation(method = "PATCH", summary = "타임캡슐 복원 API", description = "타임캡슐을 복원하는 API입니다.")
     public CustomResponse<?> restoreCapsule(
             @PathVariable("timecapsuleId") Long timecapsuleId
@@ -60,7 +63,7 @@ public class CapsuleController {
         return CustomResponse.onSuccess(HttpStatus.OK, result);
     }
 
-    @GetMapping("{timecapsuleId}")
+    @GetMapping("/{timecapsuleId}")
     @Operation(method = "GET", summary = "타임캡슐 상세 조회 API", description = "1개 타임캡슐 상세 조회하는 API입니다.")
     public CustomResponse<CapsuleResDTO.CapsuleDetailResDTO> getCapsule(
             @PathVariable("timecapsuleId") Long timecapsuleId,

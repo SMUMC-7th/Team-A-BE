@@ -1,5 +1,6 @@
 package com.example.echo.domain.capsule.dto.response;
 
+import com.example.echo.domain.capsule.entity.TagName;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -21,7 +22,7 @@ public class CapsuleResDTO {
             String title,
             String content,
             List<String> image, // 이미지 URL 리스트
-            Long tagId,
+            TagName tagName,
             LocalDateTime createdAt,
             LocalDateTime now,
             LocalDate deadline
@@ -34,7 +35,7 @@ public class CapsuleResDTO {
             Long userId,
             boolean isOpened,
             String title,
-            Long tagId,
+            TagName tagName,
             LocalDateTime createdAt,
             LocalDateTime now,
             LocalDate deadline

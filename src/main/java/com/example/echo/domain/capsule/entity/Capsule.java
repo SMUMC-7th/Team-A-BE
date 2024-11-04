@@ -41,9 +41,13 @@ public class Capsule extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tag_id")
-    private Tag tag;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "tag_id")
+//    private Tag tag;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tag_name", columnDefinition = "VARCHAR(15)", nullable = false)
+    private TagName tagName;
 
     @OneToMany(mappedBy = "capsule", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Image> images;

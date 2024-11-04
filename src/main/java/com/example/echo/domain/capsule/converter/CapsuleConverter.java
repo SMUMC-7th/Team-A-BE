@@ -4,7 +4,9 @@ import com.example.echo.domain.capsule.dto.request.CapsuleReqDTO;
 import com.example.echo.domain.capsule.dto.response.CapsuleResDTO;
 import com.example.echo.domain.capsule.entity.Capsule;
 import com.example.echo.domain.capsule.entity.Image;
-import com.example.echo.domain.capsule.entity.Tag;
+import com.example.echo.domain.capsule.entity.TagName;
+import com.example.echo.domain.capsule.exception.CapsuleErrorCode;
+import com.example.echo.domain.capsule.exception.CapsuleException;
 import com.example.echo.domain.security.entity.AuthUser;
 import com.example.echo.domain.user.entity.User;
 import lombok.AccessLevel;
@@ -24,16 +26,28 @@ public class CapsuleConverter {
 
 
     // DTO -> Entity
-    public static Capsule toCapsule(CapsuleReqDTO.CreateCapsuleReqDTO reqDTO, Tag tag, AuthUser authUser) {
+    public static Capsule toCapsule(CapsuleReqDTO.CreateCapsuleReqDTO reqDTO, AuthUser authUser) {
+        TagName tagNameEnum = convertTagName(reqDTO.tagName());
+
         return Capsule.builder()
                 .title(reqDTO.title())
                 .content(reqDTO.content())
                 .deadLine(reqDTO.deadline())
                 .isOpened(false)
-                .tag(tag) // 태그 설정
+                .tagName(tagNameEnum) // 태그 설정
                 .user(convertToUser(authUser)) // 사용자 정보 설정
                 .build();
     }
+
+    // String -> TagName
+    private static TagName convertTagName(String tagName) {
+        try {
+            return TagName.fromDisplayName(tagName); // String을 TagName으로 변환
+        } catch (IllegalArgumentException e) {
+            throw new CapsuleException(CapsuleErrorCode.INVALID_TAG_NAME); // 잘못된 태그 이름 처리
+        }
+    }
+
 
     //Entity -> DTO
     public static CapsuleResDTO.CapsuleResponseDTO toCreateCapsuleResponseDto(Capsule capsule) {
@@ -55,7 +69,7 @@ public class CapsuleConverter {
         return CapsuleResDTO.CapsulePreviewResDTO.builder()
                 .id(capsule.getId())
                 .userId(authUser.getId())
-                .tagId(capsule.getTag().getId())
+                .tagName(capsule.getTagName())
                 .isOpened(capsule.isOpened())
                 .title(capsule.getTitle())
                 .createdAt(capsule.getCreatedAt())
@@ -77,7 +91,7 @@ public class CapsuleConverter {
                 .title(capsule.getTitle())
                 .content(capsule.getContent())
                 .image(imageUrls)
-                .tagId(capsule.getTag().getId())
+                .tagName(capsule.getTagName())
                 .createdAt(capsule.getCreatedAt())
                 .now(LocalDateTime.now())
                 .deadline(capsule.getDeadLine())
