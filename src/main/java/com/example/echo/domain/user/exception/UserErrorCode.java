@@ -1,3 +1,4 @@
+
 package com.example.echo.domain.user.exception;
 
 import com.example.echo.global.apiPayload.code.BaseErrorCode;
