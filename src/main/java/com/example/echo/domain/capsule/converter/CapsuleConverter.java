@@ -27,7 +27,7 @@ public class CapsuleConverter {
 
     // DTO -> Entity
     public static Capsule toCapsule(CapsuleReqDTO.CreateCapsuleReqDTO reqDTO, AuthUser authUser) {
-        TagName tagNameEnum = convertTagName(reqDTO.tagName());
+        TagName tagNameEnum = toTagName(reqDTO.tagName());
 
         return Capsule.builder()
                 .title(reqDTO.title())
@@ -40,7 +40,7 @@ public class CapsuleConverter {
     }
 
     // String -> TagName
-    private static TagName convertTagName(String tagName) {
+    private static TagName toTagName(String tagName) {
         try {
             return TagName.fromDisplayName(tagName); // String을 TagName으로 변환
         } catch (IllegalArgumentException e) {

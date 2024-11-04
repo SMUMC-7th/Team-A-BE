@@ -24,7 +24,7 @@ public class CapsuleQueryService {
     }
 
     public CapsuleResDTO.CapsuleDetailResDTO getCapsule(Long capsuleId, AuthUser authUser){
-        Capsule capsule = capsuleRepository.findById(capsuleId)
+        Capsule capsule = capsuleRepository.findByIdAndDeletedAtIsNull(capsuleId)
                 .orElseThrow(() -> new CapsuleException(CapsuleErrorCode.NOT_FOUND));
         return CapsuleConverter.toCapsuleDetailDto(capsule, authUser);
     }
