@@ -48,13 +48,13 @@ public class Capsule extends BaseEntity {
     @OneToMany(mappedBy = "capsule", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Image> images;
 
-//    // 소프트 삭제 메서드
-//    public void softDelete() {
-//        this.deletedAt = LocalDateTime.now();
-//    }
-//
-//    // 복원 메서드
-//    public void restore() {
-//        this.deletedAt = null;
-//    }
+    // 소프트 삭제 메서드
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    // 복원 메서드
+    public void restore() {
+        this.deletedAt = null;
+    }
 }

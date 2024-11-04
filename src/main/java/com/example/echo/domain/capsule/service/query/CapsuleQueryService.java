@@ -22,7 +22,7 @@ public class CapsuleQueryService {
     private final CapsuleRepository capsuleRepository;
 
     public List<CapsuleResDTO.CapsulePreviewResDTO> getCapsules(AuthUser authUser){
-        List<Capsule> capsules = capsuleRepository.findByUserId(authUser.getId());
+        List<Capsule> capsules = capsuleRepository.findByUserIdAndDeletedAtIsNull(authUser.getId());
         return CapsuleConverter.fromList(capsules, authUser);
     }
 

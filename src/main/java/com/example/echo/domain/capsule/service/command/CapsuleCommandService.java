@@ -5,6 +5,7 @@ import com.example.echo.domain.capsule.converter.TagConverter;
 import com.example.echo.domain.capsule.dto.request.CapsuleReqDTO;
 import com.example.echo.domain.capsule.dto.response.CapsuleResDTO;
 import com.example.echo.domain.capsule.entity.Capsule;
+import com.example.echo.domain.capsule.entity.Image;
 import com.example.echo.domain.capsule.entity.Tag;
 import com.example.echo.domain.capsule.entity.TagName;
 import com.example.echo.domain.capsule.exception.CapsuleErrorCode;
@@ -12,8 +13,6 @@ import com.example.echo.domain.capsule.exception.CapsuleException;
 import com.example.echo.domain.capsule.repository.CapsuleRepository;
 import com.example.echo.domain.capsule.repository.TagRepository;
 import com.example.echo.domain.security.entity.AuthUser;
-import com.example.echo.domain.user.entity.User;
-import com.example.echo.domain.user.repository.UserReposiotry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +50,28 @@ public class CapsuleCommandService {
     public void deleteCapsule(Long id) {
         Capsule capsule = capsuleRepository.findById(id).orElseThrow(() ->
                 new CapsuleException(CapsuleErrorCode.NOT_FOUND));
-        capsuleRepository.delete(capsule);
+        capsule.softDelete();
+
+        //연관된 tag softdelete
+        capsule.getTag().softDelete();
+
+        // 연관된 Image softdelete
+        for (Image image : capsule.getImages()) {
+            image.softDelete();
+        }
+    }
+
+    public void restoreCapsule(Long id) {
+        Capsule capsule = capsuleRepository.findById(id).orElseThrow(() ->
+                new CapsuleException(CapsuleErrorCode.NOT_FOUND));
+        capsule.restore();
+
+        //연관된 tag restore
+        capsule.getTag().restore();
+
+        // 연관된 Image restore
+        for (Image image : capsule.getImages()) {
+            image.restore();
+        }
     }
 }

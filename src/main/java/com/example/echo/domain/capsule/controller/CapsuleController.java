@@ -44,6 +44,15 @@ public class CapsuleController {
         return CustomResponse.onSuccess(HttpStatus.NO_CONTENT, "성공적으로 타임캡슐이 삭제되었습니다.");
     }
 
+    @PatchMapping("{timecapsuleId}")
+    @Operation(method = "PATCH", summary = "타임캡슐 복원 API", description = "타임캡슐을 복원하는 API입니다.")
+    public CustomResponse<?> restoreCapsule(
+            @PathVariable("timecapsuleId") Long timecapsuleId
+    ){
+        capsuleCommandService.restoreCapsule(timecapsuleId);
+        return CustomResponse.onSuccess(HttpStatus.OK, "성공적으로 타임캡슐이 복원되었습니다.");
+    }
+
     @GetMapping("")
     @Operation(method = "GET", summary = "타임캡슐 조회 API", description = "특정 유저의 타임캡슐을 조회하는 API입니다.")
     public CustomResponse<List<CapsuleResDTO.CapsulePreviewResDTO>> getCapsules(@CurrentUser AuthUser authUser){
