@@ -3,6 +3,8 @@ package com.example.echo.domain.capsule.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -18,7 +20,20 @@ public class Image {
     @Column(name = "img_url")
     private String imageUrl;
 
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "capsule_id")
     private Capsule capsule;
+
+    // 소프트 삭제 메서드
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    // 복원 메서드
+    public void restore() {
+        this.deletedAt = null;
+    }
 }

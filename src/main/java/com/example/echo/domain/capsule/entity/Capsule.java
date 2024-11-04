@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,6 +40,17 @@ public class Capsule extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "tag_id")
+//    private Tag tag;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tag_name", columnDefinition = "VARCHAR(15)", nullable = false)
+    private TagName tagName;
+
+    @OneToMany(mappedBy = "capsule", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Image> images;
 
     // 소프트 삭제 메서드
     public void softDelete() {
