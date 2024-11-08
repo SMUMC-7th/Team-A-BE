@@ -18,7 +18,7 @@ public enum CapsuleErrorCode implements BaseErrorCode {
     TAG_NOT_FOUND(HttpStatus.NOT_FOUND,
             "CapsuleTag404",
             "존재하지 않은 태그 이름입니다."),
-    CLOSED_TAG(HttpStatus.FORBIDDEN,
+    CLOSED_CAPSULE(HttpStatus.FORBIDDEN,
             "CapsuleTag409",
             "열리지 않은 타임캡슐입니다.");
 
