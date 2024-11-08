@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum CapsuleErrorCode implements BaseErrorCode {
+
     NOT_FOUND(HttpStatus.NOT_FOUND,
               "Capsule404",
             "게시글을 찾을 수 없습니다."),
@@ -16,7 +17,10 @@ public enum CapsuleErrorCode implements BaseErrorCode {
             "유효하지 않은 태그 이름입니다."),
     TAG_NOT_FOUND(HttpStatus.NOT_FOUND,
             "CapsuleTag404",
-            "존재하지 않은 태그 이름입니다.");
+            "존재하지 않은 태그 이름입니다."),
+    CLOSED_TAG(HttpStatus.FORBIDDEN,
+            "CapsuleTag409",
+            "열리지 않은 타임캡슐입니다.");
 
     private final HttpStatus status;
     private final String code;

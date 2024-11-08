@@ -2,6 +2,8 @@ package com.example.echo.domain.capsule.controller;
 
 import com.example.echo.domain.capsule.dto.request.CapsuleReqDTO;
 import com.example.echo.domain.capsule.dto.response.CapsuleResDTO;
+import com.example.echo.domain.capsule.dto.response.ChatGPTResponseDTO;
+import com.example.echo.domain.capsule.service.ChatGPTService;
 import com.example.echo.domain.capsule.service.command.CapsuleCommandService;
 import com.example.echo.domain.capsule.service.query.CapsuleQueryService;
 import com.example.echo.domain.security.annotation.CurrentUser;
@@ -22,8 +24,10 @@ import java.util.List;
 @RequestMapping("/api/timecapsules")
 @Tag(name = "타입캡슐 API")
 public class CapsuleController {
+
     private final CapsuleCommandService capsuleCommandService;
     private final CapsuleQueryService capsuleQueryService;
+    private final ChatGPTService chatGPTService;
 
     @PostMapping("")
     @Operation(method = "POST", summary = "타임캡슐 생성 API", description = "타임캡슐을 생성하는 API입니다.")
@@ -70,5 +74,11 @@ public class CapsuleController {
             @CurrentUser AuthUser authUser){
         CapsuleResDTO.CapsuleDetailResDTO result = capsuleQueryService.getCapsule(timecapsuleId,authUser);
         return CustomResponse.onSuccess(HttpStatus.OK, result);
+    }
+
+    @PostMapping("/{timecapsuleId}/ai")
+    public CustomResponse<ChatGPTResponseDTO> generateQuestion(@PathVariable("timecapsuleId") Long capsuleId) {
+        ChatGPTResponseDTO questions = chatGPTService.generateQuestion(capsuleId);
+        return CustomResponse.onSuccess(questions);
     }
 }
