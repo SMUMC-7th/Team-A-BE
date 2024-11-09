@@ -95,5 +95,9 @@ public class UserController {
         userCommandService.updatePassword(authUser.getEmail(), updatePasswordRequestDto);
         return CustomResponse.onSuccess(HttpStatus.OK, "비밀번호 변경이 완료되었습니다.");
     }
+<<<<<<< HEAD
 
 }
+=======
+}
+>>>>>>> bdaed10 (✨ feat: 이메일 인증 구현)
