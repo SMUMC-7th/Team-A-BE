@@ -2,7 +2,6 @@ package com.example.echo.domain.capsule.controller;
 
 import com.example.echo.domain.capsule.dto.request.CapsuleReqDTO;
 import com.example.echo.domain.capsule.dto.response.CapsuleResDTO;
-import com.example.echo.domain.capsule.dto.response.ChatGPTResponseDTO;
 import com.example.echo.domain.capsule.service.ChatGPTService;
 import com.example.echo.domain.capsule.service.command.CapsuleCommandService;
 import com.example.echo.domain.capsule.service.query.CapsuleQueryService;
@@ -77,8 +76,9 @@ public class CapsuleController {
     }
 
     @PostMapping("/{timecapsuleId}/ai")
-    public CustomResponse<ChatGPTResponseDTO> generateQuestion(@PathVariable("timecapsuleId") Long capsuleId) {
-        ChatGPTResponseDTO questions = chatGPTService.generateQuestion(capsuleId);
+    @Operation(summary = "타임캡슐 내용 기반 AI 질문 생성 API")
+    public CustomResponse<String> generateQuestion(@PathVariable("timecapsuleId") Long capsuleId) {
+        String questions = chatGPTService.generateQuestion(capsuleId);
         return CustomResponse.onSuccess(questions);
     }
 }
