@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/email-auth")
+@RequestMapping("/api/email")
 @RequiredArgsConstructor
 @Tag(name = "이메일 인증 API", description = "이메일 인증 API 입니다.")
 public class EmailAuthController {
