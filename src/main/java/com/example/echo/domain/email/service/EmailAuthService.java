@@ -27,7 +27,7 @@ public class EmailAuthService {
             throw new UserException(UserErrorCode.INVALID_EMAIL);
         }
         String authCode = createCode(); //인증 코드 생성
-        emailSender.sendAuthCodeForSignUp(email, authCode); //email로 인증코드 전송
+        emailSender.sendAuthCode(email, authCode); //email로 인증코드 전송
         redisUtil.save(email, authCode, authCodeExpirationMillis, TimeUnit.MILLISECONDS); //Redis에 인증 코드 저장
     }
 

@@ -23,10 +23,10 @@ public class DefaultEmailSender {
         this.serviceEmail = serviceEmail;
     }
 
-    //회원가입 시 이메일로 "인증 코드"를 전송하는 메서드
-    public void sendAuthCodeForSignUp(final String targetEmail, final String authCode) {
+    // 비밀번호 찾기 시 이메일로 "인증 코드"를 전송하는 메서드
+    public void sendAuthCode(final String targetEmail, final String authCode) {
         String mailBody = generateEmailBody(authCode); // 이메일 본문 생성
-        sendMail("회원가입 인증번호 메일입니다.", targetEmail, mailBody);
+        sendMail("비밀번호 찾기 인증번호 메일입니다.", targetEmail, mailBody);
     }
 
     //이메일을 전송하는 메서드
