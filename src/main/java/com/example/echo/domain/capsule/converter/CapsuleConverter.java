@@ -74,7 +74,7 @@ public class CapsuleConverter {
                 .title(capsule.getTitle())
                 .createdAt(capsule.getCreatedAt())
                 .now(LocalDateTime.now())
-                .deadline(capsule.getDeadLine())
+                .deadline(capsule.getDeadLine().atStartOfDay())
                 .build();
     }
 
@@ -94,7 +94,7 @@ public class CapsuleConverter {
                 .tagName(capsule.getTagName())
                 .createdAt(capsule.getCreatedAt())
                 .now(LocalDateTime.now())
-                .deadline(capsule.getDeadLine())
+                .deadline(capsule.getDeadLine().atStartOfDay())
                 .build();
     }
 }
