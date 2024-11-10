@@ -25,7 +25,7 @@ public class CapsuleResDTO {
             TagName tagName,
             LocalDateTime createdAt,
             LocalDateTime now,
-            LocalDate deadline
+            LocalDateTime deadline
 
     ){}
 
@@ -38,6 +38,6 @@ public class CapsuleResDTO {
             TagName tagName,
             LocalDateTime createdAt,
             LocalDateTime now,
-            LocalDate deadline
+            LocalDateTime deadline
     ){}
 }
