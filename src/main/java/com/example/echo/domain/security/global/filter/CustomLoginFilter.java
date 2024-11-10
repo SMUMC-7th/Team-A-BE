@@ -4,6 +4,7 @@ import com.example.echo.domain.security.dto.JwtDto;
 import com.example.echo.domain.security.dto.LoginRequestDto;
 import com.example.echo.domain.security.userDetails.CustomUserDetails;
 import com.example.echo.domain.security.utils.JwtUtil;
+import com.example.echo.global.apiPayload.CustomResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -80,13 +81,16 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
                 .refreshToken(jwtUtil.createJwtRefreshToken(customUserDetails)) //refresh token 생성
                 .build();
 
+        // CustomResponse 작성
+        CustomResponse<JwtDto> customResponse = CustomResponse.onSuccess(jwtDto);
+
         ObjectMapper objectMapper = new ObjectMapper();
-        response.setStatus(HttpStatus.OK.value()); //Response 의 Status 를 200으로 설정
+        response.setStatus(HttpStatus.OK.value());  // Response의 Status를 200으로 설정
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        //Body 에 토큰이 담긴 Response 쓰기
-        response.getWriter().write(objectMapper.writeValueAsString(jwtDto));
+        // Body에 토큰을 담은 Response 쓰기
+        response.getWriter().write(objectMapper.writeValueAsString(customResponse));
     }
 
     //로그인 실패시
