@@ -1,4 +1,4 @@
-package com.example.echo.domain.notification.service;
+package com.example.echo.domain.notification.service.command;
 
 import com.example.echo.domain.notification.exception.NotificationErrorCode;
 import com.example.echo.domain.notification.exception.NotificationException;

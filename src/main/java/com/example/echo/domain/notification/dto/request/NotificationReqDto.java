@@ -1,6 +1,6 @@
-package com.example.echo.domain.notification.dto;
+package com.example.echo.domain.notification.dto.request;
 
-public class NotificationDto {
+public class NotificationReqDto {
 
     public record FcmSendDto(
             String fcmToken,
