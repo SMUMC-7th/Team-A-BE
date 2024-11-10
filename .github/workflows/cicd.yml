@@ -17,30 +17,27 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'
-          distribution: 'temurin' # temurin 배포판의 JDK 17 사용
+          distribution: 'temurin'
 
       # Setting application.yml
       - name: Make application.yml
         run: | 
           mkdir -p src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}"  > src/main/resources/application.yml
-          find src
+          echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
 
       # Setting firebase-adminsdk.json
       - name: Make firebase-adminsdk.json
         run: |
           mkdir -p src/main/resources/firebase
-          echo "${{ secrets.FIREBASE_ADMIN_SDK_JSON }}" > src/main/resources/firebase/echo-b1052-firebase-adminsdk-krznq-28abce2926.json
+          echo "${{ secrets.FIREBASE_ADMIN_SDK_JSON }}" > src/main/resources/firebase/echo-b1052-firebase-adminsdk.json
 
-      # gradlew chmod
+      # Grant execute permission for gradlew
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew 
 
       # Spring Boot Build
       - name: Spring Boot Build
         run: ./gradlew clean build -x test
-
-      # ------------------- Docker --------------------
 
       # Docker Image Build
       - name: Docker Image Build 
@@ -57,8 +54,6 @@ jobs:
       - name: Docker Hub push 
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGENAME }}
 
-      # ------------------- EC2 --------------------
-
       # AWS EC2 Server Connect & Docker 명령어 실행
       - name: AWS EC2 Connection
         uses: appleboy/ssh-action@v0.1.6 
@@ -69,13 +64,9 @@ jobs:
           port: ${{ secrets.EC2_SSH_PORT }}
           timeout: 60s
           script: | 
-            # 컨테이너 중지 및 삭제
             sudo docker stop ${{ secrets.DOCKERHUB_IMAGENAME }} || true
             sudo docker rm ${{ secrets.DOCKERHUB_IMAGENAME }} || true
-            
-            # 최신 Docker 이미지 pull 및 실행
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGENAME }}
             sudo docker run -it -d --network host --name ${{ secrets.DOCKERHUB_IMAGENAME }} \
-              -v /path/to/firebase:/app/resources/firebase \  # JSON 파일 경로 마운트
               -e TZ=Asia/Seoul \
               ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGENAME }}
