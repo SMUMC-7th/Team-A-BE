@@ -46,4 +46,10 @@ public class FcmController {
         // 성공 응답 반환
         return CustomResponse.onSuccess(response);
     }
+
+    @PatchMapping("/{id}/read")
+    public CustomResponse<String> markNotificationAsRead(@PathVariable Long id) {
+        fcmService.markAsRead(id);
+        return CustomResponse.onSuccess("알림이 읽음 상태로 업데이트되었습니다.");
+    }
 }

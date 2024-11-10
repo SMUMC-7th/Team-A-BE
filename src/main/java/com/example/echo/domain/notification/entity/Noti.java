@@ -45,4 +45,8 @@ public class Noti {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void setRead(boolean read) {
+        this.isRead = read;
+    }
 }

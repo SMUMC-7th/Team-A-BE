@@ -7,6 +7,8 @@ import com.example.echo.domain.capsule.repository.CapsuleRepository;
 import com.example.echo.domain.notification.converter.NotificationConverter;
 import com.example.echo.domain.notification.dto.request.NotificationReqDto;
 import com.example.echo.domain.notification.entity.Noti;
+import com.example.echo.domain.notification.exception.NotificationErrorCode;
+import com.example.echo.domain.notification.exception.NotificationException;
 import com.example.echo.domain.notification.repository.NotificationRepository;
 import com.example.echo.domain.user.entity.User;
 import com.example.echo.domain.user.exception.UserErrorCode;
@@ -58,5 +60,14 @@ public class FcmService {
 
         Noti notification = notificationConverter.toNoti(fcmSendDto, user, capsule, success);
         notificationRepository.save(notification);
+    }
+
+    public void markAsRead(Long notificationId) {
+        Noti notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new NotificationException(NotificationErrorCode.NOTIFICATION_NOT_FOUND));
+
+        if (!notification.isRead()) {
+            notification.setRead(true);  // 읽음 상태로 변경
+        }
     }
 }
