@@ -18,7 +18,11 @@ public enum UserErrorCode implements BaseErrorCode {
     USER_INACTIVE(HttpStatus.FORBIDDEN,
             "USER403_1", "계정이 비활성화 상태입니다."),
     WRONG_AUTH_TYPE(HttpStatus.BAD_REQUEST,
-            "USER400_2", "잘못된 인증 방식입니다.");
+            "USER400_2", "잘못된 인증 방식입니다."),
+    INVALID_EMAIL(HttpStatus.BAD_REQUEST,
+            "USER400_2", "이메일이 다릅니다."),
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "USER409_1", "이미 존재하는 이메일입니다.");
+
 
 
 

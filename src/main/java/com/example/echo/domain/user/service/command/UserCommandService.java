@@ -27,7 +27,18 @@ public class UserCommandService {
     private final UserReposiotry userRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    // 중복 이메일 처리
+    private void validateEmail(String email){
+        // 이미 있는 이메일의 유저 에러처리
+        Optional<User> _user = userRepository.findByEmail(email);
+        if(_user.isPresent()){
+            throw new UserException(UserErrorCode.DUPLICATE_EMAIL);
+        }
+    }
+
     public UserResDto.UserResponseDto createUser(UserReqDto.CreateUserRequestDto dto){
+        validateEmail(dto.email());
         User user = UserConverter.toEntity(dto, passwordEncoder);
         userRepository.save(user);
         return UserConverter.from(user);
@@ -58,7 +69,7 @@ public class UserCommandService {
     public JwtDto auth(UserReqDto.OAuthUserRequestDto dto, AuthType authType){
         // soft delete 된 유저 포함해서 전체 user email로 찾기
         Optional<User> optionalUser = userRepository.findByEmail(dto.email());
-        // 네이버 회원가입
+        // 소셜 회원가입
         if(optionalUser.isEmpty()){
             User newUser = UserConverter.toEntity(dto, authType);
             userRepository.save(newUser);
