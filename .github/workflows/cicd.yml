@@ -29,7 +29,7 @@ jobs:
       - name: Make firebase-adminsdk.json
         run: |
           mkdir -p src/main/resources/firebase
-          echo "${{ secrets.FIREBASE_ADMIN_SDK_JSON }}" > src/main/resources/firebase/echo-b1052-firebase-adminsdk.json
+          echo "${{ secrets.FIREBASE_ADMIN_SDK_JSON }}" > src/main/resources/firebase/echo-b1052-firebase-adminsdk-krznq-28abce2926.json
 
       # Grant execute permission for gradlew
       - name: Grant execute permission for gradlew
