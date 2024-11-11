@@ -66,15 +66,17 @@ public class CapsuleConverter {
 
     // Entity -> Preview DTO
     public static CapsuleResDTO.CapsulePreviewResDTO toCapsulePreviewDto(Capsule capsule, AuthUser authUser) {
+        LocalDateTime now = LocalDateTime.now();
+        boolean isOpened = capsule.isOpened() || now.isAfter(capsule.getDeadLine().atStartOfDay());
         return CapsuleResDTO.CapsulePreviewResDTO.builder()
                 .id(capsule.getId())
                 .userId(authUser.getId())
                 .tagName(capsule.getTagName())
-                .isOpened(capsule.isOpened())
+                .isOpened(isOpened)
                 .title(capsule.getTitle())
                 .createdAt(capsule.getCreatedAt())
-                .now(LocalDateTime.now())
-                .deadline(capsule.getDeadLine())
+                .now(now)
+                .deadline(capsule.getDeadLine().atStartOfDay())
                 .build();
     }
 
@@ -83,18 +85,20 @@ public class CapsuleConverter {
         List<String> imageUrls = capsule.getImages().stream()
                 .map(Image::getImageUrl)
                 .collect(Collectors.toList());
+        LocalDateTime now = LocalDateTime.now();
+        boolean isOpened = capsule.isOpened() || now.isAfter(capsule.getDeadLine().atStartOfDay());
 
         return CapsuleResDTO.CapsuleDetailResDTO.builder()
                 .capsuleId(capsule.getId())
                 .userId(authUser.getId())
-                .isOpened(capsule.isOpened())
+                .isOpened(isOpened)
                 .title(capsule.getTitle())
                 .content(capsule.getContent())
                 .image(imageUrls)
                 .tagName(capsule.getTagName())
                 .createdAt(capsule.getCreatedAt())
-                .now(LocalDateTime.now())
-                .deadline(capsule.getDeadLine())
+                .now(now)
+                .deadline(capsule.getDeadLine().atStartOfDay())
                 .build();
     }
 }
