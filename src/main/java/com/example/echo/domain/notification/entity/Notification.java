@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @Table(name = "notification")
-public class Noti {
+public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,9 +35,6 @@ public class Noti {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "success", nullable = false)
-    private boolean success;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "capsule_id")
     private Capsule capsule;
@@ -45,8 +42,4 @@ public class Noti {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
-    public void setRead(boolean read) {
-        this.isRead = read;
-    }
 }
