@@ -13,6 +13,7 @@ import com.example.echo.domain.user.service.query.UserQueryService;
 import com.example.echo.global.apiPayload.CustomResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -75,8 +76,9 @@ public class UserController {
 
     @PatchMapping
     @Operation(summary = "회원 탈퇴 API")
-    public CustomResponse<?> deleteUser(@AuthenticationPrincipal @CurrentUser AuthUser authUser) {
-        userCommandService.deleteUser(authUser.getEmail());
+    public CustomResponse<?> deleteUser(HttpServletRequest request,
+                                        @CurrentUser AuthUser authUser) {
+        userCommandService.deleteUser(request, authUser.getEmail());
         return CustomResponse.onSuccess(HttpStatus.OK, "성공적으로 회원이 탈퇴되었습니다.");
     }
 
