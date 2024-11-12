@@ -102,26 +102,39 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         log.info("[ Login Filter ] 로그인에 실패하였습니다.");
 
+        String errorCode;
         String errorMessage;
+
         if (failed instanceof BadCredentialsException) {
+            errorCode = "LOGIN401";
             errorMessage = "잘못된 정보입니다.";
         } else if (failed instanceof LockedException) {
+            errorCode = "LOGIN423";
             errorMessage = "계정이 잠금 상태입니다.";
         } else if (failed instanceof DisabledException) {
+            errorCode = "LOGIN403";
             errorMessage = "계정이 비활성화 되었습니다.";
         } else if (failed instanceof UsernameNotFoundException) {
+            errorCode = "LOGIN404";
             errorMessage = "계정을 찾을 수 없습니다.";
         } else if (failed instanceof AuthenticationServiceException) {
+            errorCode = "LOGIN400";
             errorMessage = "Request Body 파싱 중 오류가 발생했습니다.";
         } else {
+            errorCode = "LOGIN500";
             errorMessage = "인증에 실패했습니다.";
         }
 
+        // CustomResponse 생성 (데이터는 null로 설정)
+        CustomResponse<Void> customResponse = CustomResponse.onFailure(errorCode, errorMessage);
+
+        // Response 작성
         ObjectMapper objectMapper = new ObjectMapper();
-        response.setStatus(HttpStatus.UNAUTHORIZED.value()); //Status 설정
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(objectMapper.writeValueAsString(errorMessage)); //error message 와 함께 Response 작성
-    }
 
+        // Body에 CustomResponse 담아 쓰기
+        response.getWriter().write(objectMapper.writeValueAsString(customResponse));
+    }
 }
