@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -77,8 +78,7 @@ public class CapsuleController {
 
     @PostMapping("/{timecapsuleId}/ai")
     @Operation(summary = "타임캡슐 내용 기반 AI 질문 생성 API")
-    public CustomResponse<String> generateQuestion(@PathVariable("timecapsuleId") Long capsuleId) {
-        String questions = chatGPTService.generateQuestion(capsuleId);
-        return CustomResponse.onSuccess(questions);
+    public Mono<CustomResponse<String>> generateQuestion(@PathVariable("timecapsuleId") Long capsuleId) {
+        return chatGPTService.generateQuestion(capsuleId);
     }
 }

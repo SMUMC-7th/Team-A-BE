@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class ChatGPTConfig {
@@ -19,17 +20,9 @@ public class ChatGPTConfig {
     private String apiUrl;
 
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
-    @Bean
-    public HttpHeaders httpHeaders() {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(secretKey);
-
-        return headers;
+    public WebClient webClient() {
+        return WebClient.builder()
+                .defaultHeader("Authorization", "Bearer " + secretKey)
+                .build();
     }
 }

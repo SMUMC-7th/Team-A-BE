@@ -9,11 +9,14 @@ import com.example.echo.domain.capsule.exception.ChatGPTErrorCode;
 import com.example.echo.domain.capsule.exception.ChatGPTException;
 import com.example.echo.domain.capsule.repository.CapsuleRepository;
 import com.example.echo.domain.security.config.ChatGPTConfig;
+import com.example.echo.global.apiPayload.CustomResponse;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +28,10 @@ public class ChatGPTService {
     private final ChatGPTConfig chatGPTConfig;
     private final CapsuleRepository capsuleRepository;
 
-    public String generateQuestion(Long capsuleId) {
+    public Mono<CustomResponse<String>> generateQuestion(Long capsuleId) {
 
+        // 캡슐 조회 후 열람 가능 여부 확인
         Capsule capsule = capsuleRepository.findById(capsuleId).orElseThrow(() -> new CapsuleException(CapsuleErrorCode.NOT_FOUND));
-        // AI 요약/질문 기능을 사용할 수 있는, 열람 가능 캡슐 여부 확인
         if (!capsule.isOpened()) { throw new CapsuleException(CapsuleErrorCode.CLOSED_CAPSULE); }
 
         // System Role 설정 (상의 후 수정 가능, figma 참고함)
@@ -50,27 +53,31 @@ public class ChatGPTService {
 
         ChatGPTReqDTO requestDTO = new ChatGPTReqDTO("gpt-4", messages);
 
-        // RestTemplate 사용하여 API 호출
-        ResponseEntity<String> responseEntity = chatGPTConfig.restTemplate()
-                .exchange(
-                chatGPTConfig.getApiUrl(),
-                HttpMethod.POST,
-                new HttpEntity<>(requestDTO, chatGPTConfig.httpHeaders()),
-                String.class
-        );
+        return chatGPTConfig.webClient()
+                .post()
+                .uri(chatGPTConfig.getApiUrl())
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(requestDTO)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, response -> { throw new ChatGPTException(ChatGPTErrorCode.FAILED_TO_CALL_API); })
+                .bodyToMono(String.class)
+                .flatMap(result -> {
+                    if (result != null && !result.isEmpty()) {
+                        try {
 
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                            ObjectMapper objectMapper = new ObjectMapper();
+                            JsonNode jsonNode = objectMapper.readTree(result);
+                            String content = jsonNode.path("choices").get(0).path("message").path("content").asText();
 
-            String result = responseEntity.getBody();
-            if (result != null) {
-                return result;
-            } else {
-                throw new ChatGPTException(ChatGPTErrorCode.NULL_RESPONSE);
-            }
+                            return Mono.just(CustomResponse.onSuccess(content));
 
-        } else {
-            throw new ChatGPTException(ChatGPTErrorCode.FAILED_TO_CALL_API);
-        }
+                        } catch (Exception e) {
+                            return Mono.error(new ChatGPTException(ChatGPTErrorCode.FAIL_TO_PARSE));
+                        }
+                    } else {
+                        return Mono.error(new ChatGPTException(ChatGPTErrorCode.NULL_RESPONSE));
+                    }
+                });
     }
 }
 
