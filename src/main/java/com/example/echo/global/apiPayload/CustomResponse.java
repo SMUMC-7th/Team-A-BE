@@ -20,7 +20,6 @@ public class CustomResponse<T> {
     @JsonProperty("message")
     private String message;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL) //필드 값이 null 이면 JSON 응답에서 제외됨.
     @JsonProperty("result")
     private final T result;
 

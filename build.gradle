@@ -76,6 +76,13 @@ dependencies {
 
     // WebClient
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // Firebase Admin SDK
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
+    
+    // 이메일
+    implementation 'com.sun.mail:jakarta.mail:2.0.1'
+
 }
 
 tasks.named('test') {
