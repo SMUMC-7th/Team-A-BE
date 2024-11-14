@@ -2,6 +2,7 @@ package com.example.echo.domain.capsule.controller;
 
 import com.example.echo.domain.capsule.dto.request.CapsuleReqDTO;
 import com.example.echo.domain.capsule.dto.response.CapsuleResDTO;
+import com.example.echo.domain.capsule.service.ChatGPTService;
 import com.example.echo.domain.capsule.service.command.CapsuleCommandService;
 import com.example.echo.domain.capsule.service.query.CapsuleQueryService;
 import com.example.echo.domain.security.annotation.CurrentUser;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -22,8 +24,10 @@ import java.util.List;
 @RequestMapping("/api/timecapsules")
 @Tag(name = "타입캡슐 API")
 public class CapsuleController {
+
     private final CapsuleCommandService capsuleCommandService;
     private final CapsuleQueryService capsuleQueryService;
+    private final ChatGPTService chatGPTService;
 
     @PostMapping("")
     @Operation(method = "POST", summary = "타임캡슐 생성 API", description = "타임캡슐을 생성하는 API입니다.")
@@ -70,5 +74,11 @@ public class CapsuleController {
             @CurrentUser AuthUser authUser){
         CapsuleResDTO.CapsuleDetailResDTO result = capsuleQueryService.getCapsule(timecapsuleId,authUser);
         return CustomResponse.onSuccess(HttpStatus.OK, result);
+    }
+
+    @PostMapping("/{timecapsuleId}/ai")
+    @Operation(summary = "타임캡슐 내용 기반 AI 질문 생성 API")
+    public Mono<CustomResponse<String>> generateQuestion(@PathVariable("timecapsuleId") Long capsuleId) {
+        return chatGPTService.generateQuestion(capsuleId);
     }
 }
