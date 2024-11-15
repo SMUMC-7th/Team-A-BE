@@ -8,14 +8,13 @@ import com.example.echo.domain.capsule.exception.CapsuleException;
 import com.example.echo.domain.capsule.exception.ChatGPTErrorCode;
 import com.example.echo.domain.capsule.exception.ChatGPTException;
 import com.example.echo.domain.capsule.repository.CapsuleRepository;
-import com.example.echo.domain.security.config.ChatGPTConfig;
+import com.example.echo.global.config.ChatGPTConfig;
 import com.example.echo.global.apiPayload.CustomResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
