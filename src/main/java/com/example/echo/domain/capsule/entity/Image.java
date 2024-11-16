@@ -17,7 +17,7 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "img_url")
+    @Column(name = "img_url", nullable = false)
     private String imageUrl;
 
     @Column(name = "deleted_at")
@@ -35,5 +35,9 @@ public class Image {
     // 복원 메서드
     public void restore() {
         this.deletedAt = null;
+    }
+
+    public void setCapsule(Capsule capsule) {
+        this.capsule = capsule;
     }
 }

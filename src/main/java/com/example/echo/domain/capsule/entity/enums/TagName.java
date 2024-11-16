@@ -1,4 +1,4 @@
-package com.example.echo.domain.capsule.entity;
+package com.example.echo.domain.capsule.entity.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
