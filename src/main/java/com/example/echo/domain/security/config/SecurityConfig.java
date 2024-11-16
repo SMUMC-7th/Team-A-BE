@@ -45,7 +45,9 @@ public class SecurityConfig {
             "/api/users/kakao",  //카카오 소셜로그인
             "/api/users/naver",  //네이버 소셜로그인
             "/api/auth/reissue", //토큰 재발급은 인증이 필요하지 않음
-            "/auth/**"
+            "/auth/**",
+            "/api/users/password", // 이메일 인증 후 비밀번호 변경
+            "/api/email/**"       // 이메일 인증
     };
 
     @Bean
