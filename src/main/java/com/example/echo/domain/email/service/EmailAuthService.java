@@ -22,10 +22,7 @@ public class EmailAuthService {
     private long authCodeExpirationMillis; //인증 코드의 유효시간
 
     //이메일 인증 코드를 생성하고 전송하는 메서드
-    public void sendEmailAuthCode(String userEmail, String email) {
-        if(!userEmail.equals(email)){
-            throw new UserException(UserErrorCode.INVALID_EMAIL);
-        }
+    public void sendEmailAuthCode(String email) {
         String authCode = createCode(); //인증 코드 생성
         emailSender.sendAuthCode(email, authCode); //email로 인증코드 전송
         redisUtil.save(email, authCode, authCodeExpirationMillis, TimeUnit.MILLISECONDS); //Redis에 인증 코드 저장

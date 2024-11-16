@@ -24,10 +24,8 @@ public class EmailAuthController {
     @Operation(method = "POST", summary = "이메일에 인증 코드 전송", description = "이메일에 인증 코드를 전송합니다. 사용자의 이메일과 같은 이메일이 아닐 경우 오류",
             parameters = {@Parameter(name = "email", description = "인증 코드를 보낼 이메일")})
     @PostMapping("/send")
-    public CustomResponse<String> sendEmailAuthCode(
-            @CurrentUser AuthUser user,
-            @RequestParam("email") String email) {
-        emailAuthService.sendEmailAuthCode(user.getEmail(), email); // 이메일 인증 코드 전송 로직을 실행
+    public CustomResponse<String> sendEmailAuthCode(@RequestParam("email") String email) {
+        emailAuthService.sendEmailAuthCode(email); // 이메일 인증 코드 전송 로직을 실행
         return CustomResponse.onSuccess("해당 이메일에 인증 코드기 전송되었습니다.");
     }
 
