@@ -90,11 +90,18 @@ public class UserController {
         return CustomResponse.onSuccess(HttpStatus.OK, "닉네임 변경이 완료되었습니다.");
     }
 
+    @PutMapping("/auth/password")
+    @Operation(summary = "회원 비밀번호 수정 API", description = "마이페이지에서 비밀번호 수정")
+    public CustomResponse<?> updateAuthPassword(@CurrentUser AuthUser authUser,
+                                            @RequestBody UserReqDto.UpdateAuthPasswordRequestDto dto) {
+        userCommandService.updatePassword(authUser.getEmail(), dto);
+        return CustomResponse.onSuccess(HttpStatus.OK, "비밀번호 변경이 완료되었습니다.");
+    }
+
     @PutMapping("/password")
-    @Operation(summary = "회원 비밀번호 수정 API")
-    public CustomResponse<?> updatePassword(@CurrentUser AuthUser authUser,
-                                            @RequestBody UserReqDto.UpdatePasswordRequestDto updatePasswordRequestDto) {
-        userCommandService.updatePassword(authUser.getEmail(), updatePasswordRequestDto);
+    @Operation(summary = "회원 비밀번호 수정 API", description = "비밀번호 찾기에서 이메일 인증 후 수정")
+    public CustomResponse<?> updatePassword(@RequestBody UserReqDto.UpdatePasswordRequestDto dto) {
+        userCommandService.setPassword(dto.email(), dto.password());
         return CustomResponse.onSuccess(HttpStatus.OK, "비밀번호 변경이 완료되었습니다.");
     }
 }
