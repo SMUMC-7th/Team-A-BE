@@ -1,4 +1,4 @@
-package com.example.echo.domain.capsule.config;
+package com.example.echo.global.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
