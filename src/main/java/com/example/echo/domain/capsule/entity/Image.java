@@ -1,5 +1,6 @@
 package com.example.echo.domain.capsule.entity;
 
+import com.example.echo.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @Table(name = "image")
-public class Image {
+public class Image extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

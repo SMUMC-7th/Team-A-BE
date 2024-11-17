@@ -38,7 +38,7 @@ public class CapsuleController {
     @Operation(method = "POST", summary = "타임캡슐 생성 API", description = "타임캡슐을 생성하는 API입니다.")
     public CustomResponse<CapsuleResDTO.CapsuleResponseDTO> createCapsule(
             @RequestBody CapsuleReqDTO.CreateCapsuleReqDTO dto,
-            @CurrentUser AuthUser authUser){
+            @CurrentUser AuthUser authUser) {
 
         CapsuleResDTO.CapsuleResponseDTO result = capsuleCommandService.createCapsule(dto, authUser);
         return CustomResponse.onSuccess(HttpStatus.CREATED, result);
@@ -49,7 +49,7 @@ public class CapsuleController {
     public CustomResponse<?> deleteCapsule(
             @PathVariable("timecapsuleId") Long timecapsuleId,
             @CurrentUser AuthUser authUser
-    ){
+    ) {
 
 
         capsuleCommandService.deleteCapsule(timecapsuleId);
@@ -60,14 +60,14 @@ public class CapsuleController {
     @Operation(method = "PATCH", summary = "타임캡슐 복원 API", description = "타임캡슐을 복원하는 API입니다.")
     public CustomResponse<?> restoreCapsule(
             @PathVariable("timecapsuleId") Long timecapsuleId
-    ){
+    ) {
         capsuleCommandService.restoreCapsule(timecapsuleId);
         return CustomResponse.onSuccess(HttpStatus.OK, "성공적으로 타임캡슐이 복원되었습니다.");
     }
 
     @GetMapping("")
     @Operation(method = "GET", summary = "타임캡슐 조회 API", description = "특정 유저의 타임캡슐을 조회하는 API입니다.")
-    public CustomResponse<List<CapsuleResDTO.CapsulePreviewResDTO>> getCapsules(@CurrentUser AuthUser authUser){
+    public CustomResponse<List<CapsuleResDTO.CapsulePreviewResDTO>> getCapsules(@CurrentUser AuthUser authUser) {
         List<CapsuleResDTO.CapsulePreviewResDTO> result = capsuleQueryService.getCapsules(authUser);
         return CustomResponse.onSuccess(HttpStatus.OK, result);
     }
@@ -76,8 +76,8 @@ public class CapsuleController {
     @Operation(method = "GET", summary = "타임캡슐 상세 조회 API", description = "1개 타임캡슐 상세 조회하는 API입니다.")
     public CustomResponse<CapsuleResDTO.CapsuleDetailResDTO> getCapsule(
             @PathVariable("timecapsuleId") Long timecapsuleId,
-            @CurrentUser AuthUser authUser){
-        CapsuleResDTO.CapsuleDetailResDTO result = capsuleQueryService.getCapsule(timecapsuleId,authUser);
+            @CurrentUser AuthUser authUser) {
+        CapsuleResDTO.CapsuleDetailResDTO result = capsuleQueryService.getCapsule(timecapsuleId, authUser);
         return CustomResponse.onSuccess(HttpStatus.OK, result);
     }
 
@@ -90,17 +90,27 @@ public class CapsuleController {
 
     @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "AWS S3 이미지 업로드 API", description = "S3와 DB 모두에 이미지를 생성합니다. 반환값은 DB에 생성된 이미지의 아이디입니다.")
-    public CustomResponse<Long> uploadImage(@RequestPart("uploadFiles") MultipartFile multipartFile) {
+    public CustomResponse<List<Long>> uploadImage(@RequestPart("uploadFiles") List<MultipartFile> multipartFiles) {
 
-        Image image = awsS3Service.uploadImage(multipartFile);
-        return CustomResponse.onSuccess(image.getId());
+        List<Image> images = awsS3Service.uploadImages(multipartFiles);
+        List<Long> imageIds = images.stream()
+                .map(Image::getId)
+                .toList();
+        return CustomResponse.onSuccess(imageIds);
     }
 
-    @DeleteMapping("/{capsuleId}/images/{imageId}")
+    @DeleteMapping("/{timecapsuleId}/images/{imageId}")
     @Operation(summary = "AWS S3 이미지 삭제 API", description = "S3와 DB 모두에서 이미지를 삭제합니다.")
-    public CustomResponse<String> deleteImageFromCapsule(@PathVariable Long capsuleId, @PathVariable Long imageId) {
+    public CustomResponse<String> deleteImageFromCapsule(@PathVariable Long timecapsuleId, @PathVariable Long imageId) {
 
-        awsS3Service.deleteImage(capsuleId, imageId);
+        awsS3Service.deleteImage(timecapsuleId, imageId);
         return CustomResponse.onSuccess("이미지가 성공적으로 삭제되었습니다.");
+    }
+
+    @DeleteMapping("/images/delete-orphan")
+    @Operation(summary = "S3 업로드 후 24시간이 지나도 캡슐이 할당되지 않은 이미지 삭제 API", description = "로직 테스트용 API입니다. 실제로 사용되지 x")
+    public CustomResponse<String> deleteOrphanedImages() {
+
+        return CustomResponse.onSuccess(awsS3Service.deleteOrphanedImages());
     }
 }
