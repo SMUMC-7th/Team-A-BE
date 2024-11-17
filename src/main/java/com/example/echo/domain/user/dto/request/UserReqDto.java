@@ -21,9 +21,15 @@ public class UserReqDto {
     }
 
 
-    public record UpdatePasswordRequestDto(
+    public record UpdateAuthPasswordRequestDto(
             String oldPassword,
             String newPassword
+    ){
+    }
+
+    public record UpdatePasswordRequestDto(
+            String email,
+            String password
     ){
     }
 }
