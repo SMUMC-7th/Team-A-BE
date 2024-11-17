@@ -61,4 +61,8 @@ public class Capsule extends BaseEntity {
     public void restore() {
         this.deletedAt = null;
     }
+
+    public void open() {
+        this.isOpened = true;
+    }
 }
