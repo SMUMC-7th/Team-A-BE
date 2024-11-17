@@ -1,8 +1,8 @@
 package com.example.echo.domain.notification.service.command;
 
 import com.example.echo.domain.capsule.entity.Capsule;
-import com.example.echo.domain.capsule.exception.CapsuleErrorCode;
-import com.example.echo.domain.capsule.exception.CapsuleException;
+import com.example.echo.domain.capsule.exception.code.CapsuleErrorCode;
+import com.example.echo.domain.capsule.exception.handler.CapsuleException;
 import com.example.echo.domain.capsule.repository.CapsuleRepository;
 import com.example.echo.domain.notification.converter.NotificationConverter;
 import com.example.echo.domain.notification.dto.request.NotificationReqDto;

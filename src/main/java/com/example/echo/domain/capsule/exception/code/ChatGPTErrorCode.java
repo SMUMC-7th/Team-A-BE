@@ -1,4 +1,4 @@
-package com.example.echo.domain.capsule.exception;
+package com.example.echo.domain.capsule.exception.code;
 
 import com.example.echo.global.apiPayload.code.BaseErrorCode;
 import lombok.AllArgsConstructor;
