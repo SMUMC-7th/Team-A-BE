@@ -15,6 +15,7 @@ public enum UserErrorCode implements BaseErrorCode {
             "USER404_1", "사용자 데이터 값이 존재하지 않습니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST,
             "USER400_1", "비밀번호가 다릅니다."),
+    PASSWORD_UNCHANGED(HttpStatus.BAD_REQUEST, "USER400_2", "비밀번호가 기존이랑 같습니다."),
     USER_INACTIVE(HttpStatus.FORBIDDEN,
             "USER403_1", "계정이 비활성화 상태입니다."),
     WRONG_AUTH_TYPE(HttpStatus.BAD_REQUEST,

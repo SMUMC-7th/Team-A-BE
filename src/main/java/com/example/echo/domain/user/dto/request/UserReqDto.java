@@ -1,5 +1,8 @@
 package com.example.echo.domain.user.dto.request;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class UserReqDto {
 
     public record CreateUserRequestDto(
