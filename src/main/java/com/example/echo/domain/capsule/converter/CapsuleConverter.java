@@ -4,9 +4,9 @@ import com.example.echo.domain.capsule.dto.request.CapsuleReqDTO;
 import com.example.echo.domain.capsule.dto.response.CapsuleResDTO;
 import com.example.echo.domain.capsule.entity.Capsule;
 import com.example.echo.domain.capsule.entity.Image;
-import com.example.echo.domain.capsule.entity.TagName;
-import com.example.echo.domain.capsule.exception.CapsuleErrorCode;
-import com.example.echo.domain.capsule.exception.CapsuleException;
+import com.example.echo.domain.capsule.entity.enums.TagName;
+import com.example.echo.domain.capsule.exception.code.CapsuleErrorCode;
+import com.example.echo.domain.capsule.exception.handler.CapsuleException;
 import com.example.echo.domain.security.entity.AuthUser;
 import com.example.echo.domain.user.entity.User;
 import lombok.AccessLevel;
@@ -94,7 +94,7 @@ public class CapsuleConverter {
                 .isOpened(isOpened)
                 .title(capsule.getTitle())
                 .content(capsule.getContent())
-                .image(imageUrls)
+                .imageList(imageUrls)
                 .tagName(capsule.getTagName())
                 .createdAt(capsule.getCreatedAt())
                 .now(now)
