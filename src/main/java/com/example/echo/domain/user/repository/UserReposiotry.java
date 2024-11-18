@@ -14,6 +14,8 @@ public interface UserReposiotry extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
+    boolean existsByEmail(String email);
+
     @Modifying
     @Query("DELETE FROM User u WHERE u.active = false AND u.deletedAt <= :expiryDate")
     void findByDeletedAtBefore(LocalDateTime expiryDate);

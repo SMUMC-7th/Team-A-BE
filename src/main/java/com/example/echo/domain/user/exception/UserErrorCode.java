@@ -21,7 +21,9 @@ public enum UserErrorCode implements BaseErrorCode {
             "USER400_2", "잘못된 인증 방식입니다."),
     INVALID_EMAIL(HttpStatus.BAD_REQUEST,
             "USER400_2", "이메일이 다릅니다."),
-    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "USER409_1", "이미 존재하는 이메일입니다.");
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "USER409_1", "이미 존재하는 이메일입니다."),
+
+    ;
 
 
 
