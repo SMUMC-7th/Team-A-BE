@@ -13,13 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class CapsuleQueryService {
     private final CapsuleRepository capsuleRepository;
 
     public List<CapsuleResDTO.CapsulePreviewResDTO> getCapsules(AuthUser authUser){
         List<Capsule> capsules = capsuleRepository.findByUserIdAndDeletedAtIsNull(authUser.getId());
+        capsules.forEach(capsule -> capsule.setIsOpened());
+        capsuleRepository.saveAll(capsules);
         return CapsuleConverter.fromList(capsules, authUser);
     }
 

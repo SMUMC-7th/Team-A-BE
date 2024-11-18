@@ -66,4 +66,9 @@ public class Capsule extends BaseEntity {
     public void setImageList(List<Image> images) {
         this.images = images;
     }
+    public void setIsOpened(){
+        if(LocalDateTime.now().isAfter(deadLine.atStartOfDay())){
+            this.isOpened = true;
+        }
+    }
 }
