@@ -103,6 +103,9 @@ public class UserCommandService {
 
     public void updatePassword(String email, UserReqDto.UpdateAuthPasswordRequestDto dto){
         User user = userRepository.findByEmailAndActiveTrue(email).orElseThrow(() -> new UserException(UserErrorCode.NO_USER_DATA_REGISTERED));
+        if(passwordEncoder.matches(user.getPassword(), dto.newPassword())){
+            throw new UserException(UserErrorCode.PASSWORD_UNCHANGED);
+        }
         if(passwordEncoder.matches(dto.oldPassword(), user.getPassword())){
             String newEncodedPassword = passwordEncoder.encode(dto.newPassword());
             user.setPassword(newEncodedPassword);
@@ -112,9 +115,14 @@ public class UserCommandService {
     }
 
     public void setPassword(String email, String password){
+        log.info(email);
         User user = userRepository.findByEmailAndActiveTrue(email).orElseThrow(() -> new UserException(UserErrorCode.NO_USER_DATA_REGISTERED));
-        String encodeedPassword = passwordEncoder.encode(password);
-        user.setPassword(password);
+
+        if(passwordEncoder.matches(user.getPassword(), password)){
+            throw new UserException(UserErrorCode.PASSWORD_UNCHANGED);
+        }
+        String encodedPassword = passwordEncoder.encode(password);
+        user.setPassword(encodedPassword);
     }
 
 
