@@ -1,5 +1,6 @@
 package com.example.echo.domain.capsule.entity;
 
+import com.example.echo.domain.capsule.entity.enums.TagName;
 import com.example.echo.domain.user.entity.User;
 import com.example.echo.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -41,15 +42,11 @@ public class Capsule extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "tag_id")
-//    private Tag tag;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "tag_name", columnDefinition = "VARCHAR(15)", nullable = false)
     private TagName tagName;
 
-    @OneToMany(mappedBy = "capsule", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "capsule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Image> images;
 
     // 소프트 삭제 메서드
@@ -64,5 +61,8 @@ public class Capsule extends BaseEntity {
 
     public void open() {
         this.isOpened = true;
+
+    public void setImageList(List<Image> images) {
+        this.images = images;
     }
 }

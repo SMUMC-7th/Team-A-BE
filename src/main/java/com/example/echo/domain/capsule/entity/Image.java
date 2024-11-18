@@ -1,5 +1,6 @@
 package com.example.echo.domain.capsule.entity;
 
+import com.example.echo.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,13 +12,13 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @Table(name = "image")
-public class Image {
+public class Image extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "img_url")
+    @Column(name = "img_url", nullable = false)
     private String imageUrl;
 
     @Column(name = "deleted_at")
@@ -35,5 +36,9 @@ public class Image {
     // 복원 메서드
     public void restore() {
         this.deletedAt = null;
+    }
+
+    public void setCapsule(Capsule capsule) {
+        this.capsule = capsule;
     }
 }

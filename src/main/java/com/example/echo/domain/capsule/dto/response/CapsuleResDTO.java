@@ -1,9 +1,8 @@
 package com.example.echo.domain.capsule.dto.response;
 
-import com.example.echo.domain.capsule.entity.TagName;
+import com.example.echo.domain.capsule.entity.enums.TagName;
 import lombok.Builder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class CapsuleResDTO {
             boolean isOpened, // boolean 타입 유지
             String title,
             String content,
-            List<String> image, // 이미지 URL 리스트
+            List<String> imageList, // 이미지 URL 리스트
             TagName tagName,
             LocalDateTime createdAt,
             LocalDateTime now,
