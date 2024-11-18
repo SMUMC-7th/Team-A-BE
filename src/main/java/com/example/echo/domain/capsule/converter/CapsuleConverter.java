@@ -67,7 +67,6 @@ public class CapsuleConverter {
     // Entity -> Preview DTO
     public static CapsuleResDTO.CapsulePreviewResDTO toCapsulePreviewDto(Capsule capsule, AuthUser authUser) {
         LocalDateTime now = LocalDateTime.now();
-        //boolean isOpened = capsule.isOpened() || now.isAfter(capsule.getDeadLine().atStartOfDay());
         return CapsuleResDTO.CapsulePreviewResDTO.builder()
                 .id(capsule.getId())
                 .userId(authUser.getId())
@@ -86,7 +85,6 @@ public class CapsuleConverter {
                 .map(Image::getImageUrl)
                 .collect(Collectors.toList());
         LocalDateTime now = LocalDateTime.now();
-       // boolean isOpened = capsule.isOpened() || now.isAfter(capsule.getDeadLine().atStartOfDay());
 
         return CapsuleResDTO.CapsuleDetailResDTO.builder()
                 .capsuleId(capsule.getId())
