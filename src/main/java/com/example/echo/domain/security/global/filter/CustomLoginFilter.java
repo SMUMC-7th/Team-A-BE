@@ -4,6 +4,7 @@ import com.example.echo.domain.security.dto.JwtDto;
 import com.example.echo.domain.security.dto.LoginRequestDto;
 import com.example.echo.domain.security.userDetails.CustomUserDetails;
 import com.example.echo.domain.security.utils.JwtUtil;
+import com.example.echo.domain.user.service.command.UserCommandService;
 import com.example.echo.global.apiPayload.CustomResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -28,6 +29,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final UserCommandService userCommandService;
 
     //로그인 시도 메서드
     @Override
@@ -49,6 +51,9 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
         String password = requestBody.password(); //password 추출
         log.info("[ Login Filter ]  Email ---> {} ", email);
         log.info("[ Login Filter ]  Password ---> {} ", password);
+
+        // 탈퇴한지 30일 지나지 않은 유저 복구
+        userCommandService.restoreUser(email);
 
         //UserNamePasswordToken 생성 (인증용 객체)
         UsernamePasswordAuthenticationToken authToken
