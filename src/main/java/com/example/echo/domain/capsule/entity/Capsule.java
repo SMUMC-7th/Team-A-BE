@@ -59,6 +59,9 @@ public class Capsule extends BaseEntity {
         this.deletedAt = null;
     }
 
+    public void open() {
+        this.isOpened = true;
+
     public void setImageList(List<Image> images) {
         this.images = images;
     }
