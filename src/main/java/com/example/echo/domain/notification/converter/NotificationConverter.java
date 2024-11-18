@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NotificationConverter {
 
+    private final UserReposiotry userReposiotry;
+    private final CapsuleRepository capsuleRepository;
+
     // FcmSendDto를 기반으로 Firebase Message 객체를 생성하는 메서드
     public static Message toFirebaseMessage(NotificationReqDto.FcmSendDto fcmSendDto) {
         // 알림 정보 설정
