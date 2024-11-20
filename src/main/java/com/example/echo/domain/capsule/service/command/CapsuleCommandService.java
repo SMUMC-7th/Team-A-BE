@@ -52,17 +52,20 @@ public class CapsuleCommandService {
     public Capsule mapCapsuleImage(Capsule capsule, List<Long> imageIds) {
 
         // 각 이미지 객체에 속하는 캡슐 set
-        List<Image> images = imageIds.stream()
-                .map(imageId -> {
-                    Image image = imageRepository.findById(imageId)
-                            .orElseThrow(() -> new ImageException(ImageErrorCode.NOT_FOUND));
-                    image.setCapsule(capsule);
-                    return image;
-                })
-                .toList();
+        // 이미지 리스트가 비어있는 경우, 받은 capsule 그대로 반환
+        if (!imageIds.isEmpty()) {
+            List<Image> images = imageIds.stream()
+                    .map(imageId -> {
+                        Image image = imageRepository.findById(imageId)
+                                .orElseThrow(() -> new ImageException(ImageErrorCode.NOT_FOUND));
+                        image.setCapsule(capsule);
+                        return image;
+                    })
+                    .toList();
 
-        // 속하는 캡슐에 이미지 리스트 set
-        capsule.setImageList(images);
+            // 속하는 캡슐에 이미지 리스트 set
+            capsule.setImageList(images);
+        }
         return capsule;
     }
 
