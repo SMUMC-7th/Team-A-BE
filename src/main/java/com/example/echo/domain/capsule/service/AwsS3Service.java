@@ -43,7 +43,7 @@ public class AwsS3Service {
     public List<Image> uploadImages(List<MultipartFile> multipartFiles) {
 
         // S3 업로드 완료한 이미지들의 메타데이터를 담을 리스트
-        List<Image> imageIds = new ArrayList<>();
+        List<Image> images = new ArrayList<>();
 
         for (MultipartFile multipartFile : multipartFiles) {
 
@@ -68,10 +68,10 @@ public class AwsS3Service {
                     .imageUrl(s3FileName)
                     .build());
 
-            imageIds.add(image);
+            images.add(image);
         }
         // 전체 업로드 된 이미지 리스트 반환
-        return imageIds;
+        return images;
     }
 
     // S3와 DB에 이미지 삭제
