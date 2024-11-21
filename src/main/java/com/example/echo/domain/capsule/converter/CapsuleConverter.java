@@ -11,6 +11,7 @@ import com.example.echo.domain.security.entity.AuthUser;
 import com.example.echo.domain.user.entity.User;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Slice;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -97,6 +98,15 @@ public class CapsuleConverter {
                 .createdAt(capsule.getCreatedAt())
                 .now(now)
                 .deadline(capsule.getDeadLine().atStartOfDay())
+                .build();
+    }
+
+    public static CapsuleResDTO.CapsulePagePreviewDTO tocapsulePageDTO(Slice<Capsule> capsules, AuthUser authUser){
+        List<CapsuleResDTO.CapsulePreviewResDTO> capsuleList = fromList(capsules.getContent(), authUser);
+        return CapsuleResDTO.CapsulePagePreviewDTO.builder()
+                .capsuleList(capsuleList)
+                .hasNext(capsules.hasNext())
+                .cursor(capsules.getContent().get(capsules.getContent().size() - 1).getId())
                 .build();
     }
 }

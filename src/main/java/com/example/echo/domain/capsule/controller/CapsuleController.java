@@ -1,7 +1,9 @@
 package com.example.echo.domain.capsule.controller;
 
+import com.example.echo.domain.capsule.converter.CapsuleConverter;
 import com.example.echo.domain.capsule.dto.request.CapsuleReqDTO;
 import com.example.echo.domain.capsule.dto.response.CapsuleResDTO;
+import com.example.echo.domain.capsule.entity.Capsule;
 import com.example.echo.domain.capsule.entity.Image;
 import com.example.echo.domain.capsule.service.AwsS3Service;
 import com.example.echo.domain.capsule.service.ChatGPTService;
@@ -11,9 +13,12 @@ import com.example.echo.domain.security.annotation.CurrentUser;
 import com.example.echo.domain.security.entity.AuthUser;
 import com.example.echo.global.apiPayload.CustomResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -71,6 +76,24 @@ public class CapsuleController {
     public CustomResponse<List<CapsuleResDTO.CapsulePreviewResDTO>> getCapsules(@CurrentUser AuthUser authUser) {
         List<CapsuleResDTO.CapsulePreviewResDTO> result = capsuleQueryService.getCapsules(authUser);
         return CustomResponse.onSuccess(HttpStatus.OK, result);
+    }
+
+    //커서 기반 페이지네이션
+    @GetMapping("/page")
+    @Operation(method = "GET", summary = "커서 기반 페이지네이션 API", description = "타임캡슐 커서 기반 페이지네이션 API입니다.")
+    @Parameters({
+            @Parameter(name = "cursor", description = "커서 값, 처음이면 0"),
+            @Parameter(name = "query", description = "쿼리 ID")
+    })
+    public CustomResponse<CapsuleResDTO.CapsulePagePreviewDTO> getArticlesByCursor(
+            @CurrentUser AuthUser authUser,
+            @RequestParam(value = "query", defaultValue = "ID") String query,
+            @RequestParam("cursor") Long cursor,
+            @RequestParam(value = "offset", defaultValue = "8") Integer offset
+    ){
+        Slice<Capsule> capsules = capsuleQueryService.getCapsulesWithPagination(authUser,cursor, offset);
+        CapsuleResDTO.CapsulePagePreviewDTO result = CapsuleConverter.tocapsulePageDTO(capsules, authUser);
+        return CustomResponse.onSuccess(result);
     }
 
     @GetMapping("/{timecapsuleId}")
