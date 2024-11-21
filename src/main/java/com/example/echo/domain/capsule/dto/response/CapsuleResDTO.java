@@ -39,4 +39,11 @@ public class CapsuleResDTO {
             LocalDateTime now,
             LocalDateTime deadline
     ){}
+
+    @Builder
+    public record CapsulePagePreviewDTO(
+            List<CapsulePreviewResDTO> capsuleList,
+            boolean hasNext,
+            Long cursor
+    ){}
 }

@@ -8,6 +8,9 @@ import com.example.echo.domain.capsule.exception.handler.CapsuleException;
 import com.example.echo.domain.capsule.repository.CapsuleRepository;
 import com.example.echo.domain.security.entity.AuthUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,4 +33,23 @@ public class CapsuleQueryService {
                 .orElseThrow(() -> new CapsuleException(CapsuleErrorCode.NOT_FOUND));
         return CapsuleConverter.toCapsuleDetailDto(capsule, authUser);
     }
+
+    public Slice<Capsule> getCapsulesWithPagination(AuthUser authUser, Long cursor, Integer offset) {
+        Pageable pageable = PageRequest.of(0, offset);
+        Slice<Capsule> capsules;
+
+        if (cursor.equals(0L)) {
+            capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullOrderByIdAsc(authUser.getId(), pageable);
+        } else {
+            capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullAndIdGreaterThanOrderByIdAsc(authUser.getId(), cursor, pageable);
+        }
+
+        // setIsOpened 호출
+        capsules.forEach(Capsule::setIsOpened);
+        capsuleRepository.saveAll(capsules.getContent());
+
+        // DTO 변환
+        return capsules;
+    }
+
 }
