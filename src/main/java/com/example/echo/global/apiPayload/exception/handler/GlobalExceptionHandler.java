@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
         CustomResponse<String> errorResponse = CustomResponse.onFailure(
                 errorCode.getCode(),
                 errorCode.getMessage(),
-                ex.getMessage()
+                null
         );
         return ResponseEntity
                 .status(errorCode.getStatus())
