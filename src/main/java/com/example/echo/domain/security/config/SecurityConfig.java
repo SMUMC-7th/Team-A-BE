@@ -7,6 +7,7 @@ import com.example.echo.domain.security.global.filter.JwtAuthorizationFilter;
 import com.example.echo.domain.security.service.TokenService;
 import com.example.echo.domain.security.utils.JwtUtil;
 import com.example.echo.domain.user.repository.UserReposiotry;
+import com.example.echo.domain.user.service.command.UserCommandService;
 import com.example.echo.global.config.CorsConfig;
 import com.example.echo.global.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class SecurityConfig {
     private final TokenService tokenService;
     private final RedisUtil redisUtil;
     private final UserReposiotry userReposiotry;
+    private final UserCommandService userCommandService;
 
 
     //인증이 필요하지 않은 url
@@ -95,7 +97,7 @@ public class SecurityConfig {
 
         // Login Filter
         CustomLoginFilter loginFilter = new CustomLoginFilter(
-                authenticationManager(authenticationConfiguration), jwtUtil);
+                authenticationManager(authenticationConfiguration), jwtUtil, userCommandService);
 
 
 

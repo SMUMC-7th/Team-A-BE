@@ -46,6 +46,7 @@ public class User extends BaseEntity {
     // 복원 메서드
     public void restore() {
         this.deletedAt = null;
+        this.active = true;
     }
 
     public void updateNickname(String nickname) {

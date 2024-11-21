@@ -1,7 +1,6 @@
 package com.example.echo.domain.email.service;
 
 
-import com.example.echo.domain.user.entity.User;
 import com.example.echo.domain.user.exception.UserErrorCode;
 import com.example.echo.domain.user.exception.UserException;
 import com.example.echo.domain.user.repository.UserReposiotry;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service

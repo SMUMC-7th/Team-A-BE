@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -134,14 +133,17 @@ public class UserCommandService {
             userRepository.save(newUser);
             return provideToken(newUser);
         }
+        else if (!optionalUser.get().getAuthType().equals(authType)) {
+            throw new UserException(UserErrorCode.DUPLICATE_EMAIL);
+        }
 
         User user = optionalUser.get();
+
+        restoreUser(user.getEmail());
+
         // active = false인 유저 에러 처리
         if (!user.isActive()) {
             throw new UserException(UserErrorCode.USER_INACTIVE);
-        }
-        if(!user.getAuthType().equals(authType)){
-            throw new UserException(UserErrorCode.WRONG_AUTH_TYPE);
         }
 
         // 로그인 처리
@@ -159,7 +161,15 @@ public class UserCommandService {
         return jwtDto;
     }
 
-
+    // 30이 지나지 않은 유저 복구
+    public void restoreUser(String email){
+        log.info("걸림");
+        LocalDateTime expiryDate = LocalDateTime.now().minusDays(30);
+        Optional<User> user = userRepository.findRestoreUser(email, expiryDate);
+        if(user.isPresent()){
+            user.get().restore();
+        }
+    }
 
 
 
