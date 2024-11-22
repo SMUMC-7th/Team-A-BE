@@ -4,15 +4,11 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.example.echo.domain.capsule.entity.Capsule;
 import com.example.echo.domain.capsule.entity.Image;
 import com.example.echo.domain.capsule.exception.code.AwsS3ErrorCode;
-import com.example.echo.domain.capsule.exception.code.CapsuleErrorCode;
 import com.example.echo.domain.capsule.exception.code.ImageErrorCode;
 import com.example.echo.domain.capsule.exception.handler.AwsS3Exception;
-import com.example.echo.domain.capsule.exception.handler.CapsuleException;
 import com.example.echo.domain.capsule.exception.handler.ImageException;
-import com.example.echo.domain.capsule.repository.CapsuleRepository;
 import com.example.echo.domain.capsule.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,42 +31,34 @@ public class AwsS3Service {
     private String bucket;
 
     private final AmazonS3 amazonS3;
-    private final CapsuleRepository capsuleRepository;
     private final ImageRepository imageRepository;
 
     // S3와 DB에 이미지 생성
-    public List<Image> uploadImages(List<MultipartFile> multipartFiles) {
+    public Long uploadImage(MultipartFile multipartFile) {
 
-        // S3 업로드 완료한 이미지들의 메타데이터를 담을 리스트
-        List<Image> images = new ArrayList<>();
-
-        for (MultipartFile multipartFile : multipartFiles) {
-
-            if (multipartFile == null || multipartFile.isEmpty()) {
-                throw new AwsS3Exception(AwsS3ErrorCode.INVALID_FILE_UPLOAD);
-            }
-            // 고유한 UUID 사용하여 새로운 파일 이름 생성 (동일 파일명일 경우 대비)
-            String s3FileName = createUniqueName(multipartFile.getOriginalFilename());
-
-            try {
-                ObjectMetadata objectMetadata = new ObjectMetadata();
-                objectMetadata.setContentType(multipartFile.getContentType());
-                objectMetadata.setContentLength(multipartFile.getSize());
-
-                amazonS3.putObject(new PutObjectRequest(bucket, s3FileName, multipartFile.getInputStream(), objectMetadata));
-
-            } catch (IOException e) {
-                throw new AwsS3Exception(AwsS3ErrorCode.FILE_UPLOAD_FAILED);
-            }
-
-            Image image = imageRepository.save(Image.builder()
-                    .imageUrl(s3FileName)
-                    .build());
-
-            images.add(image);
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            throw new AwsS3Exception(AwsS3ErrorCode.INVALID_FILE_UPLOAD);
         }
-        // 전체 업로드 된 이미지 리스트 반환
-        return images;
+        // 고유한 UUID 사용하여 새로운 파일 이름 생성 (동일 파일명일 경우 대비)
+        String s3FileName = createUniqueName(multipartFile.getOriginalFilename());
+
+        try {
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentType(multipartFile.getContentType());
+            objectMetadata.setContentLength(multipartFile.getSize());
+
+            amazonS3.putObject(new PutObjectRequest(bucket, s3FileName, multipartFile.getInputStream(), objectMetadata));
+
+        } catch (IOException e) {
+            throw new AwsS3Exception(AwsS3ErrorCode.FILE_UPLOAD_FAILED);
+        }
+
+        // 이미지 메타데이터 객체 생성
+        Image image = imageRepository.save(Image.builder()
+                .imageUrl(s3FileName)
+                .build());
+
+        return image.getId();
     }
 
     // S3와 DB에 이미지 삭제

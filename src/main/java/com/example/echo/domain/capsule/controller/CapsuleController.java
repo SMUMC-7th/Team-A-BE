@@ -4,7 +4,6 @@ import com.example.echo.domain.capsule.converter.CapsuleConverter;
 import com.example.echo.domain.capsule.dto.request.CapsuleReqDTO;
 import com.example.echo.domain.capsule.dto.response.CapsuleResDTO;
 import com.example.echo.domain.capsule.entity.Capsule;
-import com.example.echo.domain.capsule.entity.Image;
 import com.example.echo.domain.capsule.service.AwsS3Service;
 import com.example.echo.domain.capsule.service.ChatGPTService;
 import com.example.echo.domain.capsule.service.command.CapsuleCommandService;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -114,19 +112,9 @@ public class CapsuleController {
 
     @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "AWS S3 이미지 업로드 API", description = "S3와 DB 모두에 이미지를 생성합니다. 반환값은 DB에 생성된 이미지의 아이디입니다.")
-    public CustomResponse<List<Long>> uploadImage(@RequestPart(value = "uploadFiles", required = false) List<MultipartFile> multipartFiles) {
+    public CustomResponse<Long> uploadImage(@RequestPart(value = "uploadFiles", required = false) MultipartFile multipartFile) {
 
-        List<Long> imageIds = new ArrayList<>();
-
-        if (multipartFiles == null || multipartFiles.isEmpty()) {
-            return CustomResponse.onSuccess(imageIds);
-        }
-        // 유효한 파일이 있는 경우 uploadImages 실행
-        List<Image> images = awsS3Service.uploadImages(multipartFiles);
-        imageIds = images.stream()
-                .map(Image::getId)
-                .toList();
-        return CustomResponse.onSuccess(imageIds);
+        return CustomResponse.onSuccess(awsS3Service.uploadImage(multipartFile));
     }
 
     @DeleteMapping("/images/{imageId}")
