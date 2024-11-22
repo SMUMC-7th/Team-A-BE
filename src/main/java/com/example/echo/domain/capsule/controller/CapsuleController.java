@@ -129,11 +129,11 @@ public class CapsuleController {
         return CustomResponse.onSuccess(imageIds);
     }
 
-    @DeleteMapping("/{timecapsuleId}/images/{imageId}")
+    @DeleteMapping("/images/{imageId}")
     @Operation(summary = "AWS S3 이미지 삭제 API", description = "S3와 DB 모두에서 이미지를 삭제합니다.")
-    public CustomResponse<String> deleteImageFromCapsule(@PathVariable Long timecapsuleId, @PathVariable Long imageId) {
+    public CustomResponse<String> deleteImageFromCapsule(@PathVariable Long imageId) {
 
-        awsS3Service.deleteImage(timecapsuleId, imageId);
+        awsS3Service.deleteImage(imageId);
         return CustomResponse.onSuccess("이미지가 성공적으로 삭제되었습니다.");
     }
 
