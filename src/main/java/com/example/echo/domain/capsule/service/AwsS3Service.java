@@ -75,10 +75,7 @@ public class AwsS3Service {
     }
 
     // S3와 DB에 이미지 삭제
-    public void deleteImage(Long capsuleId, Long imageId) {
-
-        Capsule capsule = capsuleRepository.findById(capsuleId)
-                .orElseThrow(() -> new CapsuleException(CapsuleErrorCode.NOT_FOUND));
+    public void deleteImage(Long imageId) {
 
         Image image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new ImageException(ImageErrorCode.NOT_FOUND));
@@ -88,7 +85,6 @@ public class AwsS3Service {
         amazonS3.deleteObject(deleteObjectRequest);
 
         // DB 에서 이미지 삭제
-        capsule.getImages().remove(image);
         imageRepository.delete(image);
     }
 
