@@ -22,7 +22,7 @@ public class CapsuleQueryService {
     private final CapsuleRepository capsuleRepository;
 
     public List<CapsuleResDTO.CapsulePreviewResDTO> getCapsules(AuthUser authUser){
-        List<Capsule> capsules = capsuleRepository.findByUserIdAndDeletedAtIsNull(authUser.getId());
+        List<Capsule> capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullOrderByDeadLineAsc(authUser.getId());
         capsules.forEach(capsule -> capsule.setIsOpened());
         capsuleRepository.saveAll(capsules);
         return CapsuleConverter.fromList(capsules, authUser);
@@ -39,9 +39,9 @@ public class CapsuleQueryService {
         Slice<Capsule> capsules;
 
         if (cursor.equals(0L)) {
-            capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullOrderByIdAsc(authUser.getId(), pageable);
+            capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullOrderByDeadLineAsc(authUser.getId(), pageable);
         } else {
-            capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullAndIdGreaterThanOrderByIdAsc(authUser.getId(), cursor, pageable);
+            capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullAndIdGreaterThanOrderByDeadLineAsc(authUser.getId(), cursor, pageable);
         }
 
         // setIsOpened 호출
