@@ -1,5 +1,6 @@
 package com.example.echo.domain.capsule.service.command;
 
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.example.echo.domain.capsule.converter.CapsuleConverter;
 import com.example.echo.domain.capsule.dto.request.CapsuleReqDTO;
 import com.example.echo.domain.capsule.dto.response.CapsuleResDTO;
@@ -15,9 +16,11 @@ import com.example.echo.domain.security.entity.AuthUser;
 import com.example.echo.domain.user.exception.UserErrorCode;
 import com.example.echo.domain.user.exception.UserException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -89,5 +92,26 @@ public class CapsuleCommandService {
         for (Image image : capsule.getImages()) {
             image.restore();
         }
+    }
+
+    @Scheduled(cron = "0 0 2 * * ?")
+    public String hardDeleteCapsule() {
+        // 1. Soft delete된 캡슐
+        List<Capsule> deletedCapsules = capsuleRepository.findAllByDeletedAtIsNotNull();
+        if (deletedCapsules.isEmpty()) {
+            return "삭제할 soft delete 캡슐이 없습니다.";
+        }
+
+        for (Capsule capsule : deletedCapsules) {
+            // 2. 연관된 이미지의 매핑 해제 및 삭제
+            for (Image image : capsule.getImages()) {
+                image.setCapsule(null); // 캡슐 매핑 해제
+            }
+
+            // 3. 캡슐 삭제
+            capsuleRepository.delete(capsule); // 하드 삭제
+        }
+
+        return "soft delete된 capsule이 삭제되었습니다.";
     }
 }
