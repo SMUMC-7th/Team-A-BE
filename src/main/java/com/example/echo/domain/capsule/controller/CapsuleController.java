@@ -60,7 +60,7 @@ public class CapsuleController {
         return CustomResponse.onSuccess(HttpStatus.NO_CONTENT, "성공적으로 타임캡슐이 삭제되었습니다.");
     }
 
-    @DeleteMapping("    /delete-capsule")
+    @DeleteMapping("/delete-capsule")
     @Operation(summary = "캡슐 Hard delete 삭제 API", description = "로직 테스트용 API입니다. 실제로 사용되지 x")
     public CustomResponse<String> hardDeleteCapsule() {
         return CustomResponse.onSuccess(capsuleCommandService.hardDeleteCapsule());
