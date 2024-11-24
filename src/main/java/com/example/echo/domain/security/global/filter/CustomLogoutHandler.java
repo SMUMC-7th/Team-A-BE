@@ -60,6 +60,15 @@ public class CustomLogoutHandler implements LogoutHandler {
                 return;
             }
 
+            // FCM 토큰 삭제
+            String fcmTokenKey = "FCM_TOKEN:" + email;
+            if (redisUtil.get(fcmTokenKey) != null) {
+                redisUtil.delete(fcmTokenKey);
+                log.info("[ CustomLogoutHandler ] FCM 토큰 삭제");
+            } else {
+                log.warn("[ CustomLogoutHandler ] FCM 토큰이 존재하지 않습니다.");
+            }
+
             HttpResponseUtil.setSuccessResponse(response, HttpStatus.OK, "로그아웃이 완료되었습니다.");
 
         } catch (ExpiredJwtException e) {
