@@ -12,6 +12,7 @@ import com.example.echo.domain.capsule.exception.handler.CapsuleException;
 import com.example.echo.domain.capsule.exception.handler.ImageException;
 import com.example.echo.domain.capsule.repository.CapsuleRepository;
 import com.example.echo.domain.capsule.repository.ImageRepository;
+import com.example.echo.domain.capsule.service.AwsS3Service;
 import com.example.echo.domain.security.entity.AuthUser;
 import com.example.echo.domain.user.exception.UserErrorCode;
 import com.example.echo.domain.user.exception.UserException;
@@ -30,6 +31,7 @@ public class CapsuleCommandService {
 
     private final CapsuleRepository capsuleRepository;
     private final ImageRepository imageRepository;
+    private final AwsS3Service awsS3Service;
 
     // 캡슐 생성 및 이미지 매핑(로직 호출)
     public CapsuleResDTO.CapsuleResponseDTO createCapsule(CapsuleReqDTO.CreateCapsuleReqDTO reqDTO, AuthUser authUser) {
@@ -106,6 +108,7 @@ public class CapsuleCommandService {
             // 2. 연관된 이미지의 매핑 해제 및 삭제
             for (Image image : capsule.getImages()) {
                 image.setCapsule(null); // 캡슐 매핑 해제
+                awsS3Service.deleteImage(image.getId());
             }
 
             // 3. 캡슐 삭제
