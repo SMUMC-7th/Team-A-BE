@@ -54,10 +54,14 @@ public class CapsuleController {
             @PathVariable("timecapsuleId") Long timecapsuleId,
             @CurrentUser AuthUser authUser
     ) {
-
-
         capsuleCommandService.deleteCapsule(timecapsuleId);
         return CustomResponse.onSuccess(HttpStatus.NO_CONTENT, "성공적으로 타임캡슐이 삭제되었습니다.");
+    }
+
+    @DeleteMapping("/delete-capsule")
+    @Operation(summary = "캡슐 Hard delete 삭제 API", description = "로직 테스트용 API입니다. 실제로 사용되지 x")
+    public CustomResponse<String> hardDeleteCapsule() {
+        return CustomResponse.onSuccess(capsuleCommandService.hardDeleteCapsule());
     }
 
     @PatchMapping("/{timecapsuleId}")
@@ -81,11 +85,11 @@ public class CapsuleController {
     @Operation(method = "GET", summary = "커서 기반 페이지네이션 API", description = "타임캡슐 커서 기반 페이지네이션 API입니다.")
     @Parameters({
             @Parameter(name = "cursor", description = "커서 값, 처음이면 0"),
-            @Parameter(name = "query", description = "쿼리 ID")
+            @Parameter(name = "query", description = "쿼리 Deadline")
     })
     public CustomResponse<CapsuleResDTO.CapsulePagePreviewDTO> getArticlesByCursor(
             @CurrentUser AuthUser authUser,
-            @RequestParam(value = "query", defaultValue = "ID") String query,
+            @RequestParam(value = "query", defaultValue = "Deadline") String query,
             @RequestParam("cursor") Long cursor,
             @RequestParam(value = "offset", defaultValue = "8") Integer offset
     ){

@@ -12,9 +12,9 @@ import java.util.Optional;
 
 public interface CapsuleRepository extends JpaRepository<Capsule,Long> {
     Optional<Capsule> findByIdAndDeletedAtIsNull(Long capsuleId);
-    List<Capsule> findByUserIdAndDeletedAtIsNull(Long userId);
+    List<Capsule> findAllByDeletedAtIsNotNull();
+    List<Capsule> findByUserIdAndDeletedAtIsNullOrderByDeadLineAsc(Long userId);
     Slice<Capsule> findByDeadLineAndIsOpenedFalse(LocalDate deadLine, Pageable pageable);
-    Slice<Capsule> findByUserIdAndDeletedAtIsNullAndIdGreaterThanOrderByIdAsc(Long userId, Long cursor, Pageable pageable);
-
-    Slice<Capsule> findByUserIdAndDeletedAtIsNullOrderByIdAsc(Long userId,Pageable pageable);
+    Slice<Capsule> findByUserIdAndDeletedAtIsNullAndIdGreaterThanOrderByDeadLineAsc(Long userId, Long cursor, Pageable pageable);
+    Slice<Capsule> findByUserIdAndDeletedAtIsNullOrderByDeadLineAsc(Long userId,Pageable pageable);
 }
