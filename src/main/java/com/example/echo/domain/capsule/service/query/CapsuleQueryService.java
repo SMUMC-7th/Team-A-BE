@@ -8,12 +8,15 @@ import com.example.echo.domain.capsule.exception.handler.CapsuleException;
 import com.example.echo.domain.capsule.repository.CapsuleRepository;
 import com.example.echo.domain.security.entity.AuthUser;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 @Service
 @Transactional
@@ -38,6 +41,10 @@ public class CapsuleQueryService {
         Pageable pageable = PageRequest.of(0, offset);
         Slice<Capsule> capsules;
 
+        if(!capsuleRepository.existsByUserIdAndDeletedAtIsNull(authUser.getId())){
+            throw new CapsuleException(CapsuleErrorCode.CAPSULE_NOT_FOUND);
+        }
+
         if (cursor.equals(0L)) {
             // cursor가 0일 경우, deadline 기준으로 정렬된 결과 반환
             capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullOrderByDeadLineAsc(authUser.getId(), pageable);
@@ -47,9 +54,11 @@ public class CapsuleQueryService {
             capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullAndCursorUsingLPAD(authUser.getId(), cursor, capsule.getDeadLine(), pageable);
         }
 
-        // setIsOpened 호출
-        capsules.forEach(Capsule::setIsOpened);
-        capsuleRepository.saveAll(capsules.getContent());
+        if(capsules.hasContent()) {
+            // setIsOpened 호출
+            capsules.forEach(Capsule::setIsOpened);
+            capsuleRepository.saveAll(capsules.getContent());
+        }
 
         // DTO 변환
         return capsules;
