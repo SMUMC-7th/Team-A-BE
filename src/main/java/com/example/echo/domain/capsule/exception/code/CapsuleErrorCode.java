@@ -21,6 +21,9 @@ public enum CapsuleErrorCode implements BaseErrorCode {
     CLOSED_CAPSULE(HttpStatus.FORBIDDEN,
             "CapsuleTag409",
             "열리지 않은 타임캡슐입니다."),
+    CAPSULE_NOT_FOUND(HttpStatus.NOT_FOUND,
+            "Capsule404_1",
+            "저장된 타임캡슐을 찾을 수 없습니다.")
     ;
 
     private final HttpStatus status;

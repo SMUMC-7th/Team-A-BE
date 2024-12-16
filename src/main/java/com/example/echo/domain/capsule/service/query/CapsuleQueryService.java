@@ -8,6 +8,7 @@ import com.example.echo.domain.capsule.exception.handler.CapsuleException;
 import com.example.echo.domain.capsule.repository.CapsuleRepository;
 import com.example.echo.domain.security.entity.AuthUser;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -41,7 +42,7 @@ public class CapsuleQueryService {
         Slice<Capsule> capsules;
 
         if(!capsuleRepository.existsByUserIdAndDeletedAtIsNull(authUser.getId())){
-            throw new CapsuleException(CapsuleErrorCode.NOT_FOUND);
+            throw new CapsuleException(CapsuleErrorCode.CAPSULE_NOT_FOUND);
         }
 
         if (cursor.equals(0L)) {
@@ -53,9 +54,11 @@ public class CapsuleQueryService {
             capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullAndCursorUsingLPAD(authUser.getId(), cursor, capsule.getDeadLine(), pageable);
         }
 
-        // setIsOpened 호출
-        capsules.forEach(Capsule::setIsOpened);
-        capsuleRepository.saveAll(capsules.getContent());
+        if(capsules.hasContent()) {
+            // setIsOpened 호출
+            capsules.forEach(Capsule::setIsOpened);
+            capsuleRepository.saveAll(capsules.getContent());
+        }
 
         // DTO 변환
         return capsules;
