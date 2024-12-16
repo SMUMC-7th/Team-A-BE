@@ -11,9 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 @Service
 @Transactional
@@ -22,9 +24,6 @@ public class CapsuleQueryService {
     private final CapsuleRepository capsuleRepository;
 
     public List<CapsuleResDTO.CapsulePreviewResDTO> getCapsules(AuthUser authUser){
-        if(!capsuleRepository.existsByUserIdAndDeletedAtIsNull(authUser.getId())){
-            throw new  CapsuleException(CapsuleErrorCode.NOT_FOUND);
-        }
         List<Capsule> capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullOrderByDeadLineAsc(authUser.getId());
         capsules.forEach(capsule -> capsule.setIsOpened());
         capsuleRepository.saveAll(capsules);
@@ -42,7 +41,7 @@ public class CapsuleQueryService {
         Slice<Capsule> capsules;
 
         if(!capsuleRepository.existsByUserIdAndDeletedAtIsNull(authUser.getId())){
-            throw new  CapsuleException(CapsuleErrorCode.NOT_FOUND);
+            throw new CapsuleException(CapsuleErrorCode.NOT_FOUND);
         }
 
         if (cursor.equals(0L)) {
