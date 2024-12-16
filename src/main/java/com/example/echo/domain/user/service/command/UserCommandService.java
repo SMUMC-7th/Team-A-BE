@@ -163,7 +163,6 @@ public class UserCommandService {
 
     // 30이 지나지 않은 유저 복구
     public void restoreUser(String email){
-        log.info("걸림");
         LocalDateTime expiryDate = LocalDateTime.now().minusDays(30);
         Optional<User> user = userRepository.findRestoreUser(email, expiryDate);
         if(user.isPresent()){
