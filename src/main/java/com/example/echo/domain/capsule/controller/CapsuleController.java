@@ -55,7 +55,6 @@ public class CapsuleController {
             @RequestBody CapsuleReqDTO.UpdateCapsuleReqDTO dto,
             @CurrentUser AuthUser authUser) {
 
-
         return CustomResponse.onSuccess(capsuleCommandService.updateCapsule(timecapsuleId, dto, authUser));
     }
 
