@@ -109,9 +109,9 @@ public class CapsuleController {
 
     @PostMapping("/{timecapsuleId}/ai")
     @Operation(summary = "타임캡슐 내용 기반 AI 질문 생성 API")
-    public Mono<CustomResponse<String>> generateQuestion(@PathVariable("timecapsuleId") Long capsuleId) {
+    public CustomResponse<String> generateQuestion(@PathVariable("timecapsuleId") Long capsuleId) {
 
-        return chatGPTService.generateQuestion(capsuleId);
+        return CustomResponse.onSuccess(chatGPTService.generateQuestion(capsuleId));
     }
 
     @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

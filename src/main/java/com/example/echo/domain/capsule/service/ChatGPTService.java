@@ -4,19 +4,19 @@ import com.example.echo.domain.capsule.dto.request.ChatGPTMsgDTO;
 import com.example.echo.domain.capsule.dto.request.ChatGPTReqDTO;
 import com.example.echo.domain.capsule.entity.Capsule;
 import com.example.echo.domain.capsule.exception.code.CapsuleErrorCode;
-import com.example.echo.domain.capsule.exception.handler.CapsuleException;
 import com.example.echo.domain.capsule.exception.code.ChatGPTErrorCode;
+import com.example.echo.domain.capsule.exception.handler.CapsuleException;
 import com.example.echo.domain.capsule.exception.handler.ChatGPTException;
 import com.example.echo.domain.capsule.repository.CapsuleRepository;
-import com.example.echo.global.apiPayload.CustomResponse;
 import com.example.echo.global.config.ChatGPTConfig;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class ChatGPTService {
     private final ChatGPTConfig chatGPTConfig;
     private final CapsuleRepository capsuleRepository;
 
-    public Mono<CustomResponse<String>> generateQuestion(Long capsuleId) {
+    public String generateQuestion(Long capsuleId) {
 
         // 캡슐 조회 후 열람 가능 여부 확인
         Capsule capsule = capsuleRepository.findById(capsuleId).orElseThrow(() -> new CapsuleException(CapsuleErrorCode.NOT_FOUND));
@@ -36,7 +36,7 @@ public class ChatGPTService {
 
         // System Role 설정 (상의 후 수정 가능, figma 참고함)
         String prompt = """
-                "타임캡슐의 내용을 바탕으로 현재의 나에게 질문을 생성해줘.
+                타임캡슐의 내용을 바탕으로 현재의 나에게 질문을 생성해줘.
                 질문은 다음과 같은 형식을 따르되, 세부적인 내용은 타임캡슐 내용에 맞게 수정해줘.
                 
                 1. 시간이 흐른 지금, 어떤 모습으로 살아가고 있나요?
@@ -53,32 +53,34 @@ public class ChatGPTService {
 
         ChatGPTReqDTO requestDTO = new ChatGPTReqDTO("gpt-4", messages);
 
-        return chatGPTConfig.webClient()
-                .post()
-                .uri(chatGPTConfig.getApiUrl())
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(requestDTO)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, response -> { throw new ChatGPTException(ChatGPTErrorCode.FAILED_TO_CALL_API); })
-                .bodyToMono(String.class)
-                .flatMap(result -> {
-                    if (result != null && !result.isEmpty()) {
-                        try {
+        try {
 
-                            ObjectMapper objectMapper = new ObjectMapper();
-                            JsonNode jsonNode = objectMapper.readTree(result);
-                            String content = jsonNode.path("choices").get(0).path("message").path("content").asText();
+            String result = chatGPTConfig.webClient()
+                    .post()
+                    .uri(chatGPTConfig.getApiUrl())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(requestDTO)
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, response -> {
+                        throw new ChatGPTException(ChatGPTErrorCode.FAILED_TO_CALL_API);
+                    })
+                    .bodyToMono(String.class)
+                    // 동기적으로 구현
+                    .block();
 
-                            return Mono.just(CustomResponse.onSuccess(content));
+            if (result != null && !result.isEmpty()) {
 
-                        } catch (Exception e) {
-                            return Mono.error(new ChatGPTException(ChatGPTErrorCode.FAIL_TO_PARSE));
-                        }
-                    } else {
-                        return Mono.error(new ChatGPTException(ChatGPTErrorCode.NULL_RESPONSE));
-                    }
-                });
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(result);
+                return jsonNode.path("choices").get(0).path("message").path("content").asText();
+
+            } else {
+                throw new ChatGPTException(ChatGPTErrorCode.NULL_RESPONSE);
+            }
+        } catch (WebClientResponseException e) {
+            throw new ChatGPTException(ChatGPTErrorCode.FAILED_TO_CALL_API);
+        } catch (JsonProcessingException e) {
+            throw new ChatGPTException(ChatGPTErrorCode.FAIL_TO_PARSE);
+        }
     }
 }
-
-

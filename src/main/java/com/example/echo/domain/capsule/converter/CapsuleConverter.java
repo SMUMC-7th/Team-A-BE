@@ -41,7 +41,7 @@ public class CapsuleConverter {
     }
 
     // String -> TagName
-    private static TagName toTagName(String tagName) {
+    public static TagName toTagName(String tagName) {
         try {
             return TagName.fromDisplayName(tagName); // String을 TagName으로 변환
         } catch (IllegalArgumentException e) {
