@@ -18,21 +18,6 @@ public interface CapsuleRepository extends JpaRepository<Capsule,Long> {
     List<Capsule> findByUserIdAndDeletedAtIsNullOrderByDeadLineAsc(Long userId);
     Slice<Capsule> findByDeadLineAndIsOpenedFalse(LocalDate deadLine, Pageable pageable);
 
-//    @Query(value = "SELECT c.*, " +
-//            "CONCAT(LPAD(DATE_FORMAT(c.dead_line, '%Y%M%D'), 10, '0'), LPAD(c.id, 10, '0')) as lpad_id " +
-//            "FROM capsule c " +
-//            "WHERE c.user_id = :userId AND c.deleted_at IS NULL " +
-//            "AND CONCAT(LPAD(DATE_FORMAT(c.dead_line, '%Y%M%D'), 10, '0'), LPAD(c.id, 10, '0')) < " +
-//            "(SELECT CONCAT(LPAD(DATE_FORMAT(c3.dead_line, '%Y%M%D'), 10, '0'), LPAD(c3.id, 10, '0')) " +
-//            "FROM capsule c3 WHERE c3.id = :capsuleId) " +
-//            "ORDER BY lpad_id ASC",
-//            nativeQuery = true)
-//    @Query(value = "SELECT c.* FROM capsule c  " +
-//            "WHERE c.user_id = :userId AND c.deleted_at IS NULL " +
-//            "AND cursorValue > (SELECT CONCAT(LPAD(DATE_FORMAT(:deadLine, '%Y%M%D'), 10, '0'), LPAD(c3.id, 10, '0')) as cursorValue FROM capsule c3 WHERE c3.id = :capsuleId) " +
-//            "ORDER BY cursorTable.cursorValue ASC",
-//            nativeQuery = true)
-
 @Query(value = """
         SELECT c.* FROM capsule c
         WHERE c.user_id = :userId AND c.deleted_at IS NULL
