@@ -30,6 +30,7 @@ public class CustomLogoutHandler implements LogoutHandler {
 
         try {
             String accessToken = jwtUtil.resolveAccessToken(request);
+            log.info("access token parsing: {}", accessToken);
 
             if (accessToken == null) {
                 log.warn("[ CustomLogoutHandler ] Access Token 이 없습니다.");
@@ -41,6 +42,7 @@ public class CustomLogoutHandler implements LogoutHandler {
 
             String email = jwtUtil.getEmail(accessToken);
             String accessTokenKey = email + ":blacklist";
+            log.info("accessTokenKey: {}", accessTokenKey);
 
             // Redis 블랙리스트 Access 토큰 추가
             // 30분
@@ -50,6 +52,7 @@ public class CustomLogoutHandler implements LogoutHandler {
             // refresh 토큰 가져오기
             String refreshTokenKey = email + ":refresh";
             String refreshToken = (String) redisUtil.get(refreshTokenKey);
+            log.info("refreshToken: {}", refreshToken);
 
             if (refreshToken != null) {
                 redisUtil.delete(refreshTokenKey);
@@ -79,6 +82,9 @@ public class CustomLogoutHandler implements LogoutHandler {
             setErrorResponse(response, SecurityErrorCode.INVALID_TOKEN);
         } catch (Exception e) {
             log.error("[ CustomLogoutHandler ] 로그아웃 처리 중 오류 발생: {}", e.getMessage());
+            log.error("Exception: {}", e.getClass().getName());
+            log.error("Exception: {}", e.getClass().getSimpleName());
+            log.error("Exception: {}", e.getClass());
             setErrorResponse(response, SecurityErrorCode.INTERNAL_SECURITY_ERROR);
         }
     }
