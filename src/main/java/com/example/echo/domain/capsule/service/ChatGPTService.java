@@ -72,15 +72,18 @@ public class ChatGPTService {
 
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode jsonNode = objectMapper.readTree(result);
-                return jsonNode.path("choices").get(0).path("message").path("content").asText();
+                String parsed = jsonNode.path("choices").get(0).path("message").path("content").asText();
+                if (parsed != null && !parsed.isEmpty()) {
+                    throw new ChatGPTException(ChatGPTErrorCode.FAIL_TO_PARSE);
+                } else {
+                    return parsed;
+                }
 
             } else {
                 throw new ChatGPTException(ChatGPTErrorCode.NULL_RESPONSE);
             }
-        } catch (WebClientResponseException e) {
+        } catch (Exception e) {
             throw new ChatGPTException(ChatGPTErrorCode.FAILED_TO_CALL_API);
-        } catch (JsonProcessingException e) {
-            throw new ChatGPTException(ChatGPTErrorCode.FAIL_TO_PARSE);
         }
     }
 }
