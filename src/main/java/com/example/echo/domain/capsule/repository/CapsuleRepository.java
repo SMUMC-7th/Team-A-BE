@@ -16,6 +16,8 @@ public interface CapsuleRepository extends JpaRepository<Capsule,Long> {
     Optional<Capsule> findByIdAndDeletedAtIsNull(Long capsuleId);
     List<Capsule> findAllByDeletedAtIsNotNull();
     List<Capsule> findByUserIdAndDeletedAtIsNullOrderByDeadLineAsc(Long userId);
+
+    Boolean existsByUserIdAndDeletedAtIsNull(Long userId);
     Slice<Capsule> findByDeadLineAndIsOpenedFalse(LocalDate deadLine, Pageable pageable);
 
 @Query(value = """

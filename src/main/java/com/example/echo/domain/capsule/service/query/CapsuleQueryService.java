@@ -22,6 +22,9 @@ public class CapsuleQueryService {
     private final CapsuleRepository capsuleRepository;
 
     public List<CapsuleResDTO.CapsulePreviewResDTO> getCapsules(AuthUser authUser){
+        if(!capsuleRepository.existsByUserIdAndDeletedAtIsNull(authUser.getId())){
+            throw new  CapsuleException(CapsuleErrorCode.NOT_FOUND);
+        }
         List<Capsule> capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullOrderByDeadLineAsc(authUser.getId());
         capsules.forEach(capsule -> capsule.setIsOpened());
         capsuleRepository.saveAll(capsules);
@@ -37,6 +40,10 @@ public class CapsuleQueryService {
     public Slice<Capsule> getCapsulesWithPagination(AuthUser authUser, Long cursor, Integer offset) {
         Pageable pageable = PageRequest.of(0, offset);
         Slice<Capsule> capsules;
+
+        if(!capsuleRepository.existsByUserIdAndDeletedAtIsNull(authUser.getId())){
+            throw new  CapsuleException(CapsuleErrorCode.NOT_FOUND);
+        }
 
         if (cursor.equals(0L)) {
             // cursor가 0일 경우, deadline 기준으로 정렬된 결과 반환

@@ -11,7 +11,7 @@ public enum CapsuleErrorCode implements BaseErrorCode {
 
     NOT_FOUND(HttpStatus.NOT_FOUND,
               "Capsule404",
-            "게시글을 찾을 수 없습니다."),
+            "타임캡슐을 찾을 수 없습니다."),
     INVALID_TAG_NAME(HttpStatus.BAD_REQUEST,
             "Capsule400",
             "유효하지 않은 태그 이름입니다."),
@@ -20,7 +20,8 @@ public enum CapsuleErrorCode implements BaseErrorCode {
             "존재하지 않은 태그 이름입니다."),
     CLOSED_CAPSULE(HttpStatus.FORBIDDEN,
             "CapsuleTag409",
-            "열리지 않은 타임캡슐입니다.");
+            "열리지 않은 타임캡슐입니다."),
+    ;
 
     private final HttpStatus status;
     private final String code;
