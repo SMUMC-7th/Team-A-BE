@@ -74,6 +74,15 @@ public class CapsuleCommandService {
         return capsule;
     }
 
+    public CapsuleResDTO.CapsuleDetailResDTO updateCapsule(Long capsuleId, CapsuleReqDTO.UpdateCapsuleReqDTO dto, AuthUser authUser) {
+
+        Capsule capsule = capsuleRepository.findById(capsuleId).orElseThrow(() -> new CapsuleException(CapsuleErrorCode.NOT_FOUND));
+        if (!capsule.isOpened()) { throw new CapsuleException(CapsuleErrorCode.CLOSED_CAPSULE); }
+
+        capsule.update(dto.title(), dto.content(), dto.tagName());
+        return CapsuleConverter.toCapsuleDetailDto(capsule, authUser);
+    }
+
     public void deleteCapsule(Long id) {
         Capsule capsule = capsuleRepository.findById(id).orElseThrow(() ->
                 new CapsuleException(CapsuleErrorCode.NOT_FOUND));

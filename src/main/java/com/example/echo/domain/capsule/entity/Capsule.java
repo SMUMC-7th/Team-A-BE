@@ -1,5 +1,6 @@
 package com.example.echo.domain.capsule.entity;
 
+import com.example.echo.domain.capsule.converter.CapsuleConverter;
 import com.example.echo.domain.capsule.entity.enums.TagName;
 import com.example.echo.domain.user.entity.User;
 import com.example.echo.global.entity.BaseEntity;
@@ -61,6 +62,15 @@ public class Capsule extends BaseEntity {
 
     public void open() {
         this.isOpened = true;
+    }
+
+    public void update(String title, String content, String tagName) {
+
+        TagName tagNameEnum = CapsuleConverter.toTagName(tagName);
+
+        this.title = title;
+        this.content = content;
+        this.tagName = tagNameEnum;
     }
     
     public void setImageList(List<Image> images) {
