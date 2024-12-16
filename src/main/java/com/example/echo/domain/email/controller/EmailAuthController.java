@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmailAuthController {
     private final EmailAuthService emailAuthService;
 
-    @Operation(method = "POST", summary = "이메일에 인증 코드 전송", description = "이메일에 인증 코드를 전송합니다. 회원가입 시 사용.")
+    @Operation(method = "POST", summary = "회원가입 시 이메일에 인증 코드 전송", description = "이메일에 인증 코드를 전송합니다. 회원가입 시 사용.")
     @PostMapping("/send/sign-up")
     public CustomResponse<String> sendEmailAuthCodeToSignUp(@RequestBody EmailRequestDto.SendEmailRequestDto dto) {
         emailAuthService.sendEmailAuthCodeToSignUp(dto.email()); // 이메일 인증 코드 전송 로직을 실행
         return CustomResponse.onSuccess("해당 이메일에 인증 코드기 전송되었습니다.");
     }
 
-    @Operation(method = "POST", summary = "이메일에 인증 코드 전송", description = "이메일에 인증 코드를 전송합니다. 비밀번호 변경 시 사용.")
+    @Operation(method = "POST", summary = "비밀번호 찾기 시 이메일에 인증 코드 전송", description = "이메일에 인증 코드를 전송합니다. 비밀번호 변경 시 사용.")
     @PostMapping("/send/password")
     public CustomResponse<String> sendEmailAuthCodeToFindPW(@RequestBody EmailRequestDto.SendEmailRequestDto dto) {
         emailAuthService.sendEmailAuthCodeToFindPW(dto.email()); // 이메일 인증 코드 전송 로직을 실행

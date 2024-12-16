@@ -54,7 +54,7 @@ public class EmailAuthService {
 
         //저장된 인증 코드와 제출된 인증 코드가 일치하지 않으면 예외 발생
         if (!authCode.equals(storedAuthCode)) {
-            throw new IllegalArgumentException("인증 코드가 일치하지 않습니다.");
+            throw new UserException(UserErrorCode.INVALID_CODE);
         }
         redisUtil.delete(email); //인증 성공 시 Redis에서 인증 코드 삭제
     }
