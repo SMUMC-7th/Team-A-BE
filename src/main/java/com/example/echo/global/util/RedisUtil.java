@@ -13,6 +13,7 @@ public class RedisUtil {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisTemplate<String, Object> redisBlackListTemplate;
+    private final RedisTemplate<String, Object> redisJsonTemplate; // 푸시 알림용
 
     public void save(String key, Object val, Long time, TimeUnit timeUnit) {
         redisTemplate.opsForValue().set(key, val, time, timeUnit);
@@ -47,6 +48,23 @@ public class RedisUtil {
 
     public boolean hasKeyBlackList(String key) {
         return redisBlackListTemplate.hasKey(key);
+    }
+
+    // JSON 데이터 저장 (Object 타입, 예: FCM 토큰)
+    public void saveJson(String key, Object value, Long time, TimeUnit timeUnit) {
+        redisJsonTemplate.opsForValue().set(key, value, time, timeUnit);
+    }
+
+    public Object getJson(String key) {
+        return redisJsonTemplate.opsForValue().get(key);
+    }
+
+    public boolean deleteJson(String key) {
+        return Boolean.TRUE.equals(redisJsonTemplate.delete(key));
+    }
+
+    public boolean hasKeyJson(String key) {
+        return Boolean.TRUE.equals(redisJsonTemplate.hasKey(key));
     }
 
 }
