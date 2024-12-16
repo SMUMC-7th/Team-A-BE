@@ -34,6 +34,16 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+    // JSON 데이터를 처리하기 위한 RedisTemplate (FCM 토큰 등)
+    @Bean
+    public RedisTemplate<String, Object> redisJsonTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(connectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        return redisTemplate;
+    }
+
     @Bean
     public RedisTemplate<String, Object> redisBlackListTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();

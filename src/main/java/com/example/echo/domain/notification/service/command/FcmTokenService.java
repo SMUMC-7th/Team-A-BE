@@ -30,7 +30,7 @@ public class FcmTokenService {
     // FCM 토큰 삭제
     public void deleteFcmToken(String email) {
         String redisKey = generateRedisKey(email);
-        boolean deleted = redisUtil.delete(redisKey);
+        boolean deleted = redisUtil.deleteJson(redisKey);
 
         if (deleted) {
             log.info("[FcmTokenService] 사용자 {}의 FCM 토큰이 삭제되었습니다.", email);
@@ -53,7 +53,7 @@ public class FcmTokenService {
     // Redis에 FCM 토큰 저장
     private void saveFcmTokenInRedis(String email, String fcmToken) {
         String redisKey = generateRedisKey(email);
-        redisUtil.save(redisKey, fcmToken, TOKEN_EXPIRATION_DAYS, TimeUnit.DAYS);
+        redisUtil.saveJson(redisKey, fcmToken, TOKEN_EXPIRATION_DAYS, TimeUnit.DAYS);
         log.info("[FcmTokenService] 사용자 {}의 FCM 토큰이 저장되었습니다.", email);
     }
 }
