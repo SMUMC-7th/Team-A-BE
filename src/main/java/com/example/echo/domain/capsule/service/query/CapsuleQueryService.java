@@ -39,9 +39,12 @@ public class CapsuleQueryService {
         Slice<Capsule> capsules;
 
         if (cursor.equals(0L)) {
+            // cursor가 0일 경우, deadline 기준으로 정렬된 결과 반환
             capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullOrderByDeadLineAsc(authUser.getId(), pageable);
         } else {
-            capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullAndIdGreaterThanOrderByDeadLineAsc(authUser.getId(), cursor, pageable);
+            Capsule capsule = capsuleRepository.findById(cursor).orElseThrow(()-> new CapsuleException(CapsuleErrorCode.NOT_FOUND));
+            // cursor가 0이 아닐 경우, cursorValue와 deadline 기준으로 정렬된 결과 반환
+            capsules = capsuleRepository.findByUserIdAndDeletedAtIsNullAndCursorUsingLPAD(authUser.getId(), cursor, capsule.getDeadLine(), pageable);
         }
 
         // setIsOpened 호출
