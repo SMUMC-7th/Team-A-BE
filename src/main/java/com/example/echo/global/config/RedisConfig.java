@@ -30,7 +30,7 @@ public class RedisConfig {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory); // Redis 연결 설정
         redisTemplate.setKeySerializer(new StringRedisSerializer()); // Redis 키 직렬화 설정
-        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer()); // Redis 값 직렬화 설정
+        redisTemplate.setValueSerializer(new StringRedisSerializer()); // Redis 값 직렬화 설정
         return redisTemplate;
     }
 
