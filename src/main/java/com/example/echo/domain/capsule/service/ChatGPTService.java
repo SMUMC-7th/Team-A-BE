@@ -77,10 +77,10 @@ public class ChatGPTService {
             } else {
                 throw new ChatGPTException(ChatGPTErrorCode.NULL_RESPONSE);
             }
-        } catch (WebClientResponseException e) {
-            throw new ChatGPTException(ChatGPTErrorCode.FAILED_TO_CALL_API);
         } catch (JsonProcessingException e) {
             throw new ChatGPTException(ChatGPTErrorCode.FAIL_TO_PARSE);
+        } catch (Exception e) {
+            throw new ChatGPTException(ChatGPTErrorCode.FAILED_TO_CALL_API);
         }
     }
 }
