@@ -14,6 +14,7 @@ public class CapsuleReqDTO {
     ){}
 
     public record UpdateCapsuleReqDTO(
+            String title,
             String content,
             String tagName
     ){}

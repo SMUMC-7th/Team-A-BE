@@ -64,10 +64,11 @@ public class Capsule extends BaseEntity {
         this.isOpened = true;
     }
 
-    public void update(String content, String tagName) {
+    public void update(String title, String content, String tagName) {
 
         TagName tagNameEnum = CapsuleConverter.toTagName(tagName);
 
+        this.title = title;
         this.content = content;
         this.tagName = tagNameEnum;
     }

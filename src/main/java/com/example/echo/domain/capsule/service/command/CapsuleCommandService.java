@@ -79,7 +79,7 @@ public class CapsuleCommandService {
         Capsule capsule = capsuleRepository.findById(capsuleId).orElseThrow(() -> new CapsuleException(CapsuleErrorCode.NOT_FOUND));
         if (!capsule.isOpened()) { throw new CapsuleException(CapsuleErrorCode.CLOSED_CAPSULE); }
 
-        capsule.update(dto.content(), dto.tagName());
+        capsule.update(dto.title(), dto.content(), dto.tagName());
         return CapsuleConverter.toCapsuleDetailDto(capsule, authUser);
     }
 
