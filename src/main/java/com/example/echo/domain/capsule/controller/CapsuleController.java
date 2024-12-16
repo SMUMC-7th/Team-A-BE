@@ -48,6 +48,17 @@ public class CapsuleController {
         return CustomResponse.onSuccess(HttpStatus.CREATED, result);
     }
 
+    @PatchMapping("/{timecapsuleId}/update")
+    @Operation(summary = "캡슐 수정 API", description = "타임캡슐을 수정하는 API입니다.")
+    public CustomResponse<CapsuleResDTO.CapsuleDetailResDTO> updateCapsule(
+            @PathVariable("timecapsuleId") Long timecapsuleId,
+            @RequestBody CapsuleReqDTO.UpdateCapsuleReqDTO dto,
+            @CurrentUser AuthUser authUser) {
+
+
+        return CustomResponse.onSuccess(capsuleCommandService.updateCapsule(timecapsuleId, dto, authUser));
+    }
+
     @DeleteMapping("/{timecapsuleId}")
     @Operation(method = "DELETE", summary = "타임캡슐 삭제 API", description = "타임캡슐을 삭제하는 API입니다.")
     public CustomResponse<?> deleteCapsule(
