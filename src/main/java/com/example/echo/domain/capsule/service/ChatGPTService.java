@@ -68,19 +68,26 @@ public class ChatGPTService {
                     // 동기적으로 구현
                     .block();
 
-            if (result != null && !result.isEmpty()) {
+            checkNullOrEmpty(result);
 
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonNode = objectMapper.readTree(result);
-                return jsonNode.path("choices").get(0).path("message").path("content").asText();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(result);
+            String parsed = jsonNode.path("choices").get(0).path("message").path("content").asText();
 
-            } else {
-                throw new ChatGPTException(ChatGPTErrorCode.NULL_RESPONSE);
-            }
+            checkNullOrEmpty(parsed);
+            return parsed;
+
         } catch (JsonProcessingException e) {
             throw new ChatGPTException(ChatGPTErrorCode.FAIL_TO_PARSE);
         } catch (Exception e) {
             throw new ChatGPTException(ChatGPTErrorCode.FAILED_TO_CALL_API);
+        }
+    }
+
+    public void checkNullOrEmpty(String string) {
+
+        if (string == null || string.isEmpty()) {
+            throw new ChatGPTException(ChatGPTErrorCode.NULL_RESPONSE);
         }
     }
 }
